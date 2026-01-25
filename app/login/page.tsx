@@ -155,7 +155,7 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium py-2.5 rounded-lg shadow-sm hover:shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full cursor-pointer bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium py-2.5 rounded-lg shadow-sm hover:shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
                                 {loading ? (
                                     <Loader2 className="animate-spin" width={18} height={18} />
@@ -185,7 +185,7 @@ export default function LoginPage() {
                             <button
                                 type="button"
                                 onClick={handleGoogleLogin}
-                                className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 hover:border-neutral-300 transition-all shadow-sm"
+                                className="flex items-center justify-center cursor-pointer gap-2 px-4 py-2 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 hover:border-neutral-300 transition-all shadow-sm active:scale-[0.98]"
                             >
                                 {/* Google Icon SVG */}
                                 <svg
