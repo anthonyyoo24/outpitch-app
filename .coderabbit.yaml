@@ -1,5 +1,4 @@
 # .coderabbit.yaml
-version: "1.0"
 reviews:
   # This tells CodeRabbit to review PRs targeting ANY branch
   target_branches:
