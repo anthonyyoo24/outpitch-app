@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from "sonner";
-import { ProfileListener } from "@/components/features/auth/profile-listener";
+import { ProfileListener } from "@/components/features/auth/ProfileListener";
 
 // ... imports
 
