@@ -1,9 +1,0 @@
-# .coderabbit.yaml
-reviews:
-  # This tells CodeRabbit to review PRs targeting ANY branch
-  target_branches:
-    - ".*"
-  # Set this to false if you want to hide that "Review skipped" message
-  review_status: true
-  # High-level summary of changes
-  chatty: false
