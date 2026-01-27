@@ -6,7 +6,11 @@ export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url)
     const code = searchParams.get('code')
     // if "next" is in param, use it as the redirect URL
-    const next = searchParams.get('next') ?? '/dashboard'
+    const rawNext = searchParams.get('next')
+    // Ensure "next" is a relative path and does not start with "//" (protocol relative)
+    const next = (rawNext && rawNext.startsWith('/') && !rawNext.startsWith('//'))
+        ? rawNext
+        : '/dashboard'
 
     if (code) {
         const supabase = await createClient()
@@ -17,7 +21,7 @@ export async function GET(request: Request) {
             // We could create the profile here, but let's rely on the ProfileListener 
             // to keep logic unified for both OAuth and Email/Password users.
 
-            return NextResponse.redirect(`${origin}${next}`)
+            return NextResponse.redirect(new URL(next, origin))
         }
     }
 
