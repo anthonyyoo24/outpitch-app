@@ -15,8 +15,6 @@ export const metadata: Metadata = {
 import { Toaster } from "sonner";
 import { ProfileListener } from "@/components/features/auth/ProfileListener";
 
-// ... imports
-
 export default function RootLayout({
   children,
 }: Readonly<{
