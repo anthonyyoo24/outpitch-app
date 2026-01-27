@@ -1,6 +1,28 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+/**
+ * **Purpose**: To allow dynamic conditional styling while handling Tailwind CSS class conflicts.
+ *
+ * It combines two powerful libraries:
+ * 1. `clsx`: Allows you to toggle classes based on boolean conditions (e.g., `isActive && 'bg-blue-500'`).
+ * 2. `tailwind-merge`: Resolves CSS specificity conflicts (e.g., if you have `px-4` and `px-8`, it ensures `px-8` wins instead of depending on CCS load order).
+ *
+ * @example
+ * // Basic usage
+ * cn("bg-red-500", "text-white") // "bg-red-500 text-white"
+ *
+ * @example
+ * // Conditional classes
+ * cn("p-4", isActive && "bg-blue-500") // "p-4" or "p-4 bg-blue-500"
+ *
+ * @example
+ * // Resolving conflicts (last one wins)
+ * cn("p-4", "p-8") // "p-8" (removes "p-4" automatically)
+ *
+ * @param inputs - A list of class values (strings, objects, arrays) to merge.
+ * @returns A clean class string with no duplicates or conflicts.
+ */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

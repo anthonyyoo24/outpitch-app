@@ -1,19 +1,23 @@
 'use client'
 
 import { Mail } from 'lucide-react'
+import { useId } from 'react';
 
 interface EmailInputProps {
     className?: string
 }
 
 export function EmailInput({ className = '', error, defaultValue }: EmailInputProps & { error?: string; defaultValue?: string }) {
+    const inputId = useId()
+
     return (
         <div className={`space-y-1.5 ${className}`}>
-            <label className="text-xs font-medium text-neutral-700 ml-1">
+            <label htmlFor={inputId} className="text-xs font-medium text-neutral-700 ml-1">
                 Email address
             </label>
             <div className="relative group">
                 <input
+                    id={inputId}
                     name="email"
                     type="email"
                     placeholder="name@company.com"

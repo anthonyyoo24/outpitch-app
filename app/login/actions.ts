@@ -20,6 +20,14 @@ export type LoginState = {
     }
 }
 
+/**
+ * Server Action to authenticate a user with email and password.
+ * Validates inputs using Zod, attempts Supabase sign-in, and handles errors.
+ *
+ * @param prevState - The previous form state, including errors and submitted values.
+ * @param formData - The raw form data submitted by the client.
+ * @returns The new state containing success status, validation errors, or auth failures.
+ */
 export async function login(prevState: LoginState, formData: FormData): Promise<LoginState> {
     const data = Object.fromEntries(formData)
     const emailStr = data.email as string

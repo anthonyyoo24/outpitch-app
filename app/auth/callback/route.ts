@@ -2,6 +2,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
+/**
+ * API Route to handle OAuth callback exchanges.
+ * Exchanges the auth code for a session and redirects the user to their intended destination.
+ *
+ * @param request - The incoming HTTP request containing 'code' and 'next' query params.
+ * @returns A redirect response to the dashboard or error page.
+ */
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url)
     const code = searchParams.get('code')

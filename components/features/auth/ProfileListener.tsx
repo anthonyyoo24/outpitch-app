@@ -5,6 +5,12 @@ import { createClient } from '@/lib/supabase/client'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 
+/**
+ * An invisible component that synchronizes the auth user with the public profiles table.
+ * It listens for successful logins and creates a profile row if one does not exist.
+ *
+ * @component
+ */
 export function ProfileListener() {
     const router = useRouter()
 
