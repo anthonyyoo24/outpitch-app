@@ -15,16 +15,21 @@ export type LoginState = {
         password?: string[]
     }
     message?: string | null
+    values?: {
+        email?: string
+    }
 }
 
 export async function login(prevState: LoginState, formData: FormData): Promise<LoginState> {
     const data = Object.fromEntries(formData)
+    const emailStr = data.email as string
     const parsed = loginSchema.safeParse(data)
 
     if (!parsed.success) {
         return {
             errors: parsed.error.flatten().fieldErrors,
             message: null,
+            values: { email: emailStr },
         }
     }
 
@@ -38,6 +43,7 @@ export async function login(prevState: LoginState, formData: FormData): Promise<
         return {
             message: error.message,
             errors: {},
+            values: { email: emailStr },
         }
     }
 

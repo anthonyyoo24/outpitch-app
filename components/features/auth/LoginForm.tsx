@@ -25,7 +25,7 @@ export function LoginForm() {
                     </div>
                 )}
 
-                <EmailInput error={state?.errors?.email?.[0]} />
+                <EmailInput error={state?.errors?.email?.[0]} defaultValue={state?.values?.email} />
                 <PasswordInput error={state?.errors?.password?.[0]} />
 
                 {/* Actions */}

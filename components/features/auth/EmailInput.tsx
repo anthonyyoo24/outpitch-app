@@ -6,7 +6,7 @@ interface EmailInputProps {
     className?: string
 }
 
-export function EmailInput({ className = '', error }: EmailInputProps & { error?: string }) {
+export function EmailInput({ className = '', error, defaultValue }: EmailInputProps & { error?: string; defaultValue?: string }) {
     return (
         <div className={`space-y-1.5 ${className}`}>
             <label className="text-xs font-medium text-neutral-700 ml-1">
@@ -17,9 +17,10 @@ export function EmailInput({ className = '', error }: EmailInputProps & { error?
                     name="email"
                     type="email"
                     placeholder="name@company.com"
+                    defaultValue={defaultValue}
                     className={`w-full bg-white border rounded-lg pl-10 pr-3 py-2.5 text-sm outline-none transition-all placeholder:text-neutral-400 text-neutral-900 ${error
-                            ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-50'
-                            : 'border-neutral-200 focus:border-neutral-400 focus:ring-4 focus:ring-neutral-100'
+                        ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-50'
+                        : 'border-neutral-200 focus:border-neutral-400 focus:ring-4 focus:ring-neutral-100'
                         }`}
                     required
                 />
