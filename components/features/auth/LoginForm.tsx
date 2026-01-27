@@ -17,7 +17,7 @@ export function LoginForm() {
 
     return (
         <>
-            <form className="space-y-4" action={formAction}>
+            <form noValidate className="space-y-4" action={formAction}>
                 {/* Global Error Message */}
                 {state?.message && (
                     <div className="p-3 text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg">
@@ -25,8 +25,8 @@ export function LoginForm() {
                     </div>
                 )}
 
-                <EmailInput />
-                <PasswordInput />
+                <EmailInput error={state?.errors?.email?.[0]} />
+                <PasswordInput error={state?.errors?.password?.[0]} />
 
                 {/* Actions */}
                 <div className="pt-2">
