@@ -28,11 +28,11 @@ export function ProfileListener() {
 
                 const { error } = await supabase
                     .from('profiles')
-                    .insert({
+                    .upsert({
                         id: user.id,
                         username: username,
                         full_name: fullName,
-                    })
+                    }, { onConflict: 'id', ignoreDuplicates: true })
 
                 if (!error) {
                     console.log('Profile created:', username)
