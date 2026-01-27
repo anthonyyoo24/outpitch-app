@@ -6,10 +6,10 @@ import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 
 export function ProfileListener() {
-    const supabase = createClient()
     const router = useRouter()
 
     useEffect(() => {
+        const supabase = createClient()
         const checkProfile = async () => {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
@@ -44,7 +44,7 @@ export function ProfileListener() {
         }
 
         checkProfile()
-    }, [supabase, router])
+    }, [router])
 
     return null // This component is invisible
 }
