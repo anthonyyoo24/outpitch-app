@@ -1,5 +1,3 @@
-'use client'
-
 import { GridBackground } from '@/components/ui/GridBackground'
 import { AuthCard } from '@/components/ui/AuthCard'
 import { LoginForm } from '@/components/features/auth/LoginForm'

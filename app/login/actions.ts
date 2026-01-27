@@ -40,8 +40,11 @@ export async function login(prevState: LoginState, formData: FormData): Promise<
     })
 
     if (error) {
+        // Log actual error for debugging
+        console.error('Login error:', error.message)
+
         return {
-            message: error.message,
+            message: 'Invalid email or password. Please try again.',
             errors: {},
             values: { email: emailStr },
         }
