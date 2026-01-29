@@ -20,7 +20,7 @@ export function SidebarListEmptyState() {
             <h3 className="text-sm font-semibold text-neutral-900">
                 No pitches yet
             </h3>
-            <p className="mt-1.5 text-xs loading-relaxed text-neutral-500">
+            <p className="mt-1.5 text-xs leading-relaxed text-neutral-500">
                 Your pitches will appear here.
             </p>
         </div>

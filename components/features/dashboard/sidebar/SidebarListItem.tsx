@@ -45,18 +45,24 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
         const currentPitchId = searchParams.get("pitchId")
         const isCurrentPitch = currentPitchId === pitch.id
 
-        // Optimistic UI update could go here, but for now we rely on server revalidation
-        const result = await deletePitchAction(pitch.id)
+        try {
+            // Optimistic UI update could go here, but for now we rely on server revalidation
+            const result = await deletePitchAction(pitch.id)
 
-        if (result?.error) {
-            toast.error("Failed to delete pitch")
-        } else {
-            toast.success("Pitch deleted")
-            setOpen(false)
+            if (result?.error) {
+                toast.error("Failed to delete pitch")
+            } else {
+                toast.success("Pitch deleted")
+                setOpen(false)
 
-            if (isCurrentPitch) {
-                router.push("/dashboard")
+                // Correctly handle navigation if the deleted pitch was active
+                if (isCurrentPitch) {
+                    router.push("/dashboard")
+                }
             }
+        } catch (error) {
+            console.error("Failed to delete pitch", error)
+            toast.error("Failed to delete pitch")
         }
     }
 
