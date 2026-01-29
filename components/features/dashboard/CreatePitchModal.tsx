@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState, useTransition, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useUIStore } from "@/lib/store/ui-store"
 import { createPitchAction } from "@/app/dashboard/actions"
@@ -18,6 +18,17 @@ export function CreatePitchModal() {
     // Local state for basic form values to disable submit if empty
     const [companyName, setCompanyName] = useState("")
     const [roleTitle, setRoleTitle] = useState("")
+
+    useEffect(() => {
+        if (!isCreatePitchModalOpen) {
+            // Wait for the closing animation to finish before resetting
+            const timer = setTimeout(() => {
+                setCompanyName("")
+                setRoleTitle("")
+            }, 300)
+            return () => clearTimeout(timer)
+        }
+    }, [isCreatePitchModalOpen])
 
     async function handleSubmit(formData: FormData) {
         startTransition(async () => {
