@@ -2,6 +2,12 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
+import { z } from "zod"
+
+const CreatePitchSchema = z.object({
+    companyName: z.string().trim().min(1, "Company name is required"),
+    roleTitle: z.string().trim().min(1, "Role title is required"),
+})
 
 // Better implementation for direct redirect
 export async function createPitchAction(formData: FormData) {
@@ -10,10 +16,21 @@ export async function createPitchAction(formData: FormData) {
 
     if (!user) throw new Error("Unauthorized")
 
+    const parseResult = CreatePitchSchema.safeParse({
+        companyName: formData.get("companyName"),
+        roleTitle: formData.get("roleTitle"),
+    })
+
+    if (!parseResult.success) {
+        return { error: parseResult.error.issues[0].message }
+    }
+
+    const { companyName, roleTitle } = parseResult.data
+
     const { data, error } = await supabase.from('pitches').insert({
         user_id: user.id,
-        company_name: formData.get("companyName") as string,
-        role_title: formData.get("roleTitle") as string,
+        company_name: companyName,
+        role_title: roleTitle,
         status: 'draft'
     }).select('id').single()
 
