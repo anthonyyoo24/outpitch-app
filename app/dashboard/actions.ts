@@ -53,8 +53,14 @@ export async function deletePitchAction(pitchId: string) {
         .delete()
         .eq('id', pitchId)
         .eq('user_id', user.id) // Ensure users can only delete their own pitches
+        .select('id')
+        .single()
 
     if (error) {
+        // PostgREST returns code PGRST116 when no rows correspond to .single()
+        if (error.code === 'PGRST116') {
+            return { error: "Pitch not found or you do not have permission to delete it." }
+        }
         return { error: error.message }
     }
 
