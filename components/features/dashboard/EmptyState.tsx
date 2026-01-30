@@ -30,6 +30,8 @@ export function EmptyState() {
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-45 h-45 pointer-events-none select-none">
                             {/* Top Right Sparkle */}
                             <svg
+                                aria-hidden="true"
+                                focusable="false"
                                 className="absolute top-8 right-8 w-4 h-4 text-neutral-400 animate-pulse"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
@@ -38,6 +40,8 @@ export function EmptyState() {
                             </svg>
                             {/* Bottom Left Sparkle */}
                             <svg
+                                aria-hidden="true"
+                                focusable="false"
                                 className="absolute bottom-10 left-10 w-3 h-3 text-neutral-300 animate-pulse delay-75"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
@@ -46,6 +50,8 @@ export function EmptyState() {
                             </svg>
                             {/* Top Left Sparkle (Small) */}
                             <svg
+                                aria-hidden="true"
+                                focusable="false"
                                 className="absolute top-12 left-12 w-2.5 h-2.5 text-neutral-300 animate-pulse delay-150"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
@@ -54,6 +60,8 @@ export function EmptyState() {
                             </svg>
                             {/* Bottom Right Sparkle (Small) */}
                             <svg
+                                aria-hidden="true"
+                                focusable="false"
                                 className="absolute bottom-14 right-12 w-2 h-2 text-neutral-300 animate-pulse"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
@@ -66,6 +74,8 @@ export function EmptyState() {
                         <div className="relative z-10 w-18 h-18 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-neutral-100 flex items-center justify-center group transition-transform hover:scale-105 duration-300">
                             {/* Rocket Icon */}
                             <svg
+                                aria-hidden="true"
+                                focusable="false"
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="32"
                                 height="32"
@@ -96,6 +106,8 @@ export function EmptyState() {
                         className="group cursor-pointer inline-flex items-center justify-center gap-2.5 px-6 py-3 bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium rounded-full transition-all shadow-md hover:shadow-lg active:scale-95"
                     >
                         <svg
+                            aria-hidden="true"
+                            focusable="false"
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
                             height="16"
