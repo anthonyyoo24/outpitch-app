@@ -1,6 +1,7 @@
 "use client"
 
 import { useUIStore } from "@/lib/store/ui-store"
+import { Plus } from "lucide-react"
 
 export function EmptyState() {
     const setOpen = useUIStore((state) => state.setCreatePitchModalOpen)
@@ -105,23 +106,7 @@ export function EmptyState() {
                         onClick={() => setOpen(true)}
                         className="group cursor-pointer inline-flex items-center justify-center gap-2.5 px-6 py-3 bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium rounded-full transition-all shadow-md hover:shadow-lg active:scale-95"
                     >
-                        <svg
-                            aria-hidden="true"
-                            focusable="false"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="opacity-70 group-hover:opacity-100 transition-opacity"
-                        >
-                            <path d="M5 12h14"></path>
-                            <path d="M12 5v14"></path>
-                        </svg>
+                        <Plus className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" />
                         <span>Create New Pitch</span>
                     </button>
                 </div>

@@ -25,6 +25,16 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { CompanyLogo } from "@/components/ui/CompanyLogo"
+import {
+    MoreVertical,
+    Pencil,
+    Copy,
+    Share2,
+    EyeOff,
+    Trash2,
+    Loader2
+} from "lucide-react"
 
 interface SidebarListItemProps {
     pitch: Pick<Tables<"pitches">, "id" | "company_name" | "role_title" | "status" | "created_at">
@@ -69,11 +79,10 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
                 href={`/dashboard?pitchId=${pitch.id}`}
                 className="group flex cursor-pointer items-center gap-3 gap-x-3 gap-y-3 rounded-xl border border-transparent bg-neutral-100 p-3 pt-3 pr-3 pb-3 pl-3 shadow-sm transition-all hover:border-neutral-200/60 hover:bg-neutral-50"
             >
-                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-neutral-200 bg-white">
-                    <div className="flex h-full w-full items-center justify-center bg-neutral-50 text-xs font-medium text-neutral-400">
-                        {pitch.company_name.substring(0, 2).toUpperCase()}
-                    </div>
-                </div>
+                <CompanyLogo
+                    name={pitch.company_name}
+                    className="h-12 w-12"
+                />
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
                     <div className="mb-0.5 flex items-start justify-between pr-6">
                         <h3 className="text-sm font-semibold leading-none text-neutral-900 group-hover:text-black">
@@ -109,91 +118,24 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <button className="absolute top-2 right-2 z-10 rounded-md p-1 text-neutral-500 transition-all hover:bg-neutral-200/50 hover:text-neutral-900 focus:outline-none opacity-100 cursor-pointer">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="21"
-                                height="21"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <circle cx="12" cy="12" r="1"></circle>
-                                <circle cx="12" cy="5" r="1"></circle>
-                                <circle cx="12" cy="19" r="1"></circle>
-                            </svg>
+                            <MoreVertical className="h-5 w-5" />
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[140px] rounded-lg border-neutral-200 p-1 shadow-lg">
                         <DropdownMenuItem className="gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-900 focus:bg-neutral-50 focus:text-neutral-900 cursor-pointer">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                            </svg>
+                            <Pencil className="h-3.5 w-3.5" />
                             <span>Edit</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-900 focus:bg-neutral-50 focus:text-neutral-900 cursor-pointer">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <rect width="13" height="13" x="9" y="9" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
+                            <Copy className="h-3.5 w-3.5" />
                             <span>Duplicate</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-900 focus:bg-neutral-50 focus:text-neutral-900 cursor-pointer">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                            </svg>
+                            <Share2 className="h-3.5 w-3.5" />
                             <span>Share Link</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-900 focus:bg-neutral-50 focus:text-neutral-900 cursor-pointer">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
-                                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-                                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-                                <line x="2" x2="22" y="2" y2="22"></line>
-                            </svg>
+                            <EyeOff className="h-3.5 w-3.5" />
                             <span>Unpublish</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="my-0.5 bg-neutral-100" />
@@ -207,22 +149,7 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
                                     setOpen(true)
                                 }}
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="14"
-                                    height="14"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="text-inherit"
-                                >
-                                    <path d="M3 6h18"></path>
-                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                </svg>
+                                <Trash2 className="h-3.5 w-3.5 text-inherit" />
                                 <span>Delete</span>
                             </DropdownMenuItem>
                         </AlertDialogTrigger>
@@ -250,26 +177,7 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
                             className="bg-red-600 hover:bg-red-700 min-w-[80px] flex justify-center items-center"
                         >
                             {isPending ? (
-                                <svg
-                                    className="h-4 w-4 animate-spin text-white"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                    ></path>
-                                </svg>
+                                <Loader2 className="h-4 w-4 animate-spin text-white" />
                             ) : (
                                 "Delete"
                             )}
