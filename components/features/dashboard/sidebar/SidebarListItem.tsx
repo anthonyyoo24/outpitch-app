@@ -6,6 +6,7 @@ import { useTransition, useState } from "react"
 import { toast } from "sonner"
 import { useRouter, useSearchParams } from "next/navigation"
 import { deletePitchAction } from "@/app/dashboard/actions"
+import { Tables } from "@/lib/supabase/database.types"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -26,13 +27,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 interface SidebarListItemProps {
-    pitch: {
-        id: string
-        company_name: string
-        role_title: string
-        status: string
-        created_at: string
-    }
+    pitch: Pick<Tables<"pitches">, "id" | "company_name" | "role_title" | "status" | "created_at">
 }
 
 export function SidebarListItem({ pitch }: SidebarListItemProps) {
@@ -44,7 +39,6 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
     const handleDelete = async () => {
         const currentPitchId = searchParams.get("pitchId")
         const isCurrentPitch = currentPitchId === pitch.id
-
         try {
             // Optimistic UI update could go here, but for now we rely on server revalidation
             const result = await deletePitchAction(pitch.id)
@@ -65,6 +59,9 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
             toast.error("Failed to delete pitch")
         }
     }
+
+    const displayStatus = pitch.status
+    const displayDate = new Date(pitch.created_at)
 
     return (
         <div className="relative">
@@ -89,20 +86,20 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
                     <div className="flex items-center">
                         <div className="flex items-center gap-1.5">
                             <span
-                                className={`h-1.5 w-1.5 rounded-full ${pitch.status === "live" || pitch.status === "published"
+                                className={`h-1.5 w-1.5 rounded-full ${displayStatus === "published"
                                     ? "bg-emerald-500"
-                                    : pitch.status === "draft"
+                                    : displayStatus === "draft"
                                         ? "bg-amber-500"
                                         : "bg-neutral-300"
                                     }`}
                             ></span>
                             <span className="text-[10px] font-medium text-neutral-700 capitalize">
-                                {pitch.status}
+                                {displayStatus}
                             </span>
                         </div>
                         <span className="mx-1.5 text-[10px] text-neutral-400">|</span>
                         <span className="text-[10px] font-normal text-neutral-500">
-                            Updated {formatDistanceToNow(new Date(pitch.created_at), { addSuffix: true })}
+                            Updated {formatDistanceToNow(displayDate, { addSuffix: true })}
                         </span>
                     </div>
                 </div>

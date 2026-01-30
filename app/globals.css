@@ -121,6 +121,12 @@
 }
 
 /* Custom Scrollbar from Mockups */
+.custom-scrollbar {
+  /* Firefox support */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }
@@ -130,12 +136,12 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e5e5e5;
+  background: var(--border);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #d4d4d4;
+  background: var(--ring);
 }
 
 @layer base {

@@ -18,60 +18,54 @@ export type Database = {
         Row: {
           bio: string | null
           calendly_link: string | null
-          company_name: string | null
-          created_at: string | null
-          email: string | null
+          company_name: string
+          created_at: string
           id: string
           portfolio: Json | null
           published_at: string | null
           resume_url: string | null
-          role_title: string | null
+          role_title: string
           social_links: Json | null
-          status: string | null
+          status: Database["public"]["Enums"]["pitch_status"]
           tech_stack: string[] | null
-          updated_at: string | null
-          user_id: string | null
-          user_name: string | null
+          updated_at: string
+          user_id: string
           video_url: string | null
           work_experience: Json | null
         }
         Insert: {
           bio?: string | null
           calendly_link?: string | null
-          company_name?: string | null
-          created_at?: string | null
-          email?: string | null
+          company_name: string
+          created_at?: string
           id?: string
           portfolio?: Json | null
           published_at?: string | null
           resume_url?: string | null
-          role_title?: string | null
+          role_title: string
           social_links?: Json | null
-          status?: string | null
+          status?: Database["public"]["Enums"]["pitch_status"]
           tech_stack?: string[] | null
-          updated_at?: string | null
-          user_id?: string | null
-          user_name?: string | null
+          updated_at?: string
+          user_id: string
           video_url?: string | null
           work_experience?: Json | null
         }
         Update: {
           bio?: string | null
           calendly_link?: string | null
-          company_name?: string | null
-          created_at?: string | null
-          email?: string | null
+          company_name?: string
+          created_at?: string
           id?: string
           portfolio?: Json | null
           published_at?: string | null
           resume_url?: string | null
-          role_title?: string | null
+          role_title?: string
           social_links?: Json | null
-          status?: string | null
+          status?: Database["public"]["Enums"]["pitch_status"]
           tech_stack?: string[] | null
-          updated_at?: string | null
-          user_id?: string | null
-          user_name?: string | null
+          updated_at?: string
+          user_id?: string
           video_url?: string | null
           work_experience?: Json | null
         }
@@ -109,7 +103,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      pitch_status: "draft" | "published"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -236,6 +230,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      pitch_status: ["draft", "published"],
+    },
   },
 } as const
