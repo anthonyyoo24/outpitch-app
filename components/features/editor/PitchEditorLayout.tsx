@@ -10,10 +10,10 @@ export function PitchEditorLayout({ pitchId }: { pitchId: string }) {
                         <span className="text-xs text-neutral-400">ID: {pitchId}</span>
                     </div>
                     <div className="flex gap-2">
-                        <button className="rounded-md px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100">
+                        <button type="button" className="rounded-md px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100">
                             Save Draft
                         </button>
-                        <button className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800">
+                        <button type="button" className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800">
                             Publish
                         </button>
                     </div>
