@@ -9,6 +9,8 @@ const CreatePitchSchema = z.object({
     roleTitle: z.string().trim().min(1, "Role title is required"),
 })
 
+const DeletePitchSchema = z.string().uuid("Invalid pitch ID format")
+
 // Better implementation for direct redirect
 export async function createPitchAction(formData: FormData) {
     const supabase = await createClient()
@@ -43,6 +45,11 @@ export async function createPitchAction(formData: FormData) {
 }
 
 export async function deletePitchAction(pitchId: string) {
+    const parseResult = DeletePitchSchema.safeParse(pitchId)
+    if (!parseResult.success) {
+        return { error: parseResult.error.issues[0].message }
+    }
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 

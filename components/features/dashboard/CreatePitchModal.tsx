@@ -95,7 +95,7 @@ export function CreatePitchModal() {
                         <Button
                             type="submit"
                             className="flex-1"
-                            disabled={isPending || !companyName || !roleTitle}
+                            disabled={isPending || !companyName.trim() || !roleTitle.trim()}
                         >
                             {isPending ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />

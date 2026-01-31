@@ -4,17 +4,20 @@ import { useState } from "react"
 
 interface CompanyLogoProps {
     name: string
-    domain?: string
     className?: string
 }
 
-export function CompanyLogo({ name, domain, className }: CompanyLogoProps) {
+export function CompanyLogo({ name, className }: CompanyLogoProps) {
     const [imgError, setImgError] = useState(false)
 
     // Helper to get initials (max 2 chars)
     const getInitials = (name: string) => {
         return name
-            .substring(0, 2)
+            .split(/\s+/)
+            .map(word => word[0])
+            .filter(Boolean)
+            .slice(0, 2)
+            .join('')
             .toUpperCase()
     }
 
@@ -33,6 +36,7 @@ export function CompanyLogo({ name, domain, className }: CompanyLogoProps) {
                         src={`https://cdn.simpleicons.org/${slug}`}
                         alt={`${name} logo`}
                         className="h-full w-full object-cover p-2"
+                        loading="lazy"
                         onError={() => setImgError(true)}
                     />
             }
