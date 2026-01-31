@@ -45,10 +45,10 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
     const [isPending, startTransition] = useTransition()
     const router = useRouter()
     const searchParams = useSearchParams()
+    const currentPitchId = searchParams.get("pitchId")
+    const isCurrentPitch = currentPitchId === pitch.id
 
     const handleDelete = async () => {
-        const currentPitchId = searchParams.get("pitchId")
-        const isCurrentPitch = currentPitchId === pitch.id
         try {
             // Optimistic UI update could go here, but for now we rely on server revalidation
             const result = await deletePitchAction(pitch.id)
@@ -77,7 +77,10 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
         <div className="relative">
             <Link
                 href={`/dashboard?pitchId=${pitch.id}`}
-                className="group flex cursor-pointer items-center gap-3 rounded-xl border border-transparent bg-neutral-100 p-3 shadow-sm transition-all hover:border-neutral-200/60 hover:bg-neutral-50"
+                className={`group flex cursor-pointer items-center gap-3 rounded-xl border p-3 shadow-sm transition-all ${isCurrentPitch
+                    ? "border-transparent bg-neutral-100 hover:border-neutral-200/60 hover:bg-neutral-50"
+                    : "border-transparent bg-white hover:border-neutral-200/60 hover:bg-neutral-100"
+                    }`}
             >
                 <CompanyLogo
                     name={pitch.company_name}
