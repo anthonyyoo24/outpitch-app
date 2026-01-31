@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { createClient } from "@/lib/supabase/server"
 import { SidebarListItem } from "./SidebarListItem"
 import { SidebarListEmptyState } from "./SidebarListEmptyState"
@@ -8,8 +9,8 @@ export async function SidebarList() {
 
     const { data: pitches, error } = await supabase
         .from("pitches")
-        .select("id, company_name, role_title, status, created_at")
-        .order("created_at", { ascending: false })
+        .select("id, company_name, role_title, status, updated_at")
+        .order("updated_at", { ascending: false })
 
     if (error) {
         console.error("Failed to load pitches", error)
@@ -24,7 +25,9 @@ export async function SidebarList() {
                 <SidebarListEmptyState />
             ) : (
                 pitches.map((pitch) => (
-                    <SidebarListItem key={pitch.id} pitch={pitch} />
+                    <Suspense key={pitch.id} fallback={null}>
+                        <SidebarListItem pitch={pitch} />
+                    </Suspense>
                 ))
             )}
         </div>

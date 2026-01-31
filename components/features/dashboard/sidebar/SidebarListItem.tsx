@@ -37,7 +37,7 @@ import {
 } from "lucide-react"
 
 interface SidebarListItemProps {
-    pitch: Pick<Tables<"pitches">, "id" | "company_name" | "role_title" | "status" | "created_at">
+    pitch: Pick<Tables<"pitches">, "id" | "company_name" | "role_title" | "status" | "updated_at">
 }
 
 export function SidebarListItem({ pitch }: SidebarListItemProps) {
@@ -71,13 +71,13 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
     }
 
     const displayStatus = pitch.status
-    const displayDate = new Date(pitch.created_at)
+    const displayDate = new Date(pitch.updated_at)
 
     return (
         <div className="relative">
             <Link
                 href={`/dashboard?pitchId=${pitch.id}`}
-                className="group flex cursor-pointer items-center gap-3 gap-x-3 gap-y-3 rounded-xl border border-transparent bg-neutral-100 p-3 pt-3 pr-3 pb-3 pl-3 shadow-sm transition-all hover:border-neutral-200/60 hover:bg-neutral-50"
+                className="group flex cursor-pointer items-center gap-3 rounded-xl border border-transparent bg-neutral-100 p-3 shadow-sm transition-all hover:border-neutral-200/60 hover:bg-neutral-50"
             >
                 <CompanyLogo
                     name={pitch.company_name}
