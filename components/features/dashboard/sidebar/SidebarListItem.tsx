@@ -117,7 +117,11 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
             <AlertDialog open={open} onOpenChange={setOpen}>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="absolute top-2 right-2 z-10 rounded-md p-1 text-neutral-500 transition-all hover:bg-neutral-200/50 hover:text-neutral-900 focus:outline-none opacity-100 cursor-pointer">
+                        <button
+                            aria-label="Open pitch actions"
+                            aria-haspopup="menu"
+                            className="absolute top-2 right-2 z-10 rounded-md p-1 text-neutral-500 transition-all hover:bg-neutral-200/50 hover:text-neutral-900 focus:outline-none opacity-100 cursor-pointer"
+                        >
                             <MoreVertical className="h-5 w-5" />
                         </button>
                     </DropdownMenuTrigger>

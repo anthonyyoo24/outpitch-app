@@ -20,15 +20,15 @@ export function EmptyState() {
                         {/* Concentric Circles (Ripples) */}
                         <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none">
                             {/* Outer Circle */}
-                            <div className="w-85 h-85 rounded-full border border-neutral-200/40"></div>
+                            <div className="w-[21.25rem] h-[21.25rem] rounded-full border border-neutral-200/40"></div>
                             {/* Middle Circle */}
                             <div className="absolute w-60 h-60 rounded-full border border-neutral-200/60"></div>
                             {/* Inner Circle */}
-                            <div className="absolute w-35 h-35 rounded-full border border-neutral-200"></div>
+                            <div className="absolute w-[8.75rem] h-[8.75rem] rounded-full border border-neutral-200"></div>
                         </div>
 
                         {/* Sparkles */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-45 h-45 pointer-events-none select-none">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[11.25rem] h-[11.25rem] pointer-events-none select-none">
                             {/* Top Right Sparkle */}
                             <svg
                                 aria-hidden="true"
@@ -72,7 +72,7 @@ export function EmptyState() {
                         </div>
 
                         {/* Central Icon Box */}
-                        <div className="relative z-10 w-18 h-18 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-neutral-100 flex items-center justify-center group transition-transform hover:scale-105 duration-300">
+                        <div className="relative z-10 w-[4.5rem] h-[4.5rem] bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-neutral-100 flex items-center justify-center group transition-transform hover:scale-105 duration-300">
                             {/* Rocket Icon */}
                             <svg
                                 aria-hidden="true"
@@ -86,7 +86,7 @@ export function EmptyState() {
                                 strokeWidth="1.5"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                className="text-neutral-400 w-10.5 h-10.5 drop-shadow-sm"
+                                className="text-neutral-400 w-[2.625rem] h-[2.625rem] drop-shadow-sm"
                             >
                                 <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
                                 <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
@@ -99,7 +99,7 @@ export function EmptyState() {
                     <h2 className="text-base font-semibold text-neutral-900 tracking-tight mb-3">
                         Ready to stand out?
                     </h2>
-                    <p className="text-sm text-neutral-500 max-w-75 mb-8 leading-relaxed">
+                    <p className="text-sm text-neutral-500 max-w-[18.75rem] mb-8 leading-relaxed">
                         Create a high-signal pitch that cuts through the noise.
                     </p>
                     <button
