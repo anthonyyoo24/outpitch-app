@@ -22,6 +22,7 @@ export function SidebarFooter() {
                 </div>
                 <button
                     onClick={() => signOutAction()}
+                    aria-label="Log out"
                     className="group/logout cursor-pointer relative p-1.5 text-neutral-400 hover:text-neutral-900 hover:bg-neutral-200/60 rounded-md transition-all"
                 >
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-neutral-900 text-white text-[10px] font-medium rounded opacity-0 group-hover/logout:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-sm">

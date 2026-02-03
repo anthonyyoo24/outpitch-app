@@ -11,9 +11,17 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     }
 
     const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        redirect("/login")
+    }
+
     const { data: latestPitch } = await supabase
         .from('pitches')
         .select('id')
+        .eq('user_id', user.id)
         .order('updated_at', { ascending: false })
         .limit(1)
         .single()

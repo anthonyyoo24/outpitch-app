@@ -33,12 +33,12 @@ export function SidebarListItemActions({ pitchId, companyName }: SidebarListItem
     const router = useRouter()
     const searchParams = useSearchParams()
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         const currentPitchId = searchParams.get("pitchId")
         const isCurrentPitch = currentPitchId === pitchId
 
-        try {
-            startTransition(async () => {
+        startTransition(async () => {
+            try {
                 const result = await deletePitchAction(pitchId)
 
                 if (result?.error) {
@@ -51,11 +51,11 @@ export function SidebarListItemActions({ pitchId, companyName }: SidebarListItem
                         router.push("/dashboard")
                     }
                 }
-            })
-        } catch (error) {
-            console.error("Failed to delete pitch", error)
-            toast.error("Failed to delete pitch")
-        }
+            } catch (error) {
+                console.error("Failed to delete pitch", error)
+                toast.error("Failed to delete pitch")
+            }
+        })
     }
 
     return (
