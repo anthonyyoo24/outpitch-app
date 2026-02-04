@@ -1,28 +1,22 @@
 "use client"
 
-export function PitchEditorLayout({ pitchId }: { pitchId: string }) {
-    return (
-        <div className="flex h-full w-full items-center justify-center bg-gray-50 p-6">
-            <div className="flex h-full w-full max-w-5xl flex-col rounded-xl border border-neutral-200 bg-white shadow-sm">
-                <div className="flex h-16 shrink-0 items-center justify-between border-b border-neutral-100 px-6">
-                    <div className="flex items-center gap-2">
-                        <h1 className="text-lg font-semibold text-neutral-900">Edit Pitch</h1>
-                        <span className="text-xs text-neutral-400">ID: {pitchId}</span>
-                    </div>
-                    <div className="flex gap-2">
-                        <button type="button" className="rounded-md px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100">
-                            Save Draft
-                        </button>
-                        <button type="button" className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800">
-                            Publish
-                        </button>
-                    </div>
-                </div>
+import React from "react"
+import { PitchCard } from "./card/PitchCard"
+import { PitchEditorToolbar } from "./PitchEditorToolbar"
 
-                <div className="flex flex-1 items-center justify-center p-10">
-                    <div className="text-center text-neutral-400">
-                        <p>Editor Widgets (Company Input, Video, Tech Stack) will go here.</p>
-                    </div>
+export function PitchEditorLayout({ pitchId }: { pitchId: string }) {
+    // Note: pitchId will be used later for fetching/saving data
+    return (
+        <div className="flex-1 relative h-full overflow-hidden bg-[#FAFAFA]" data-pitch-id={pitchId}>
+            {/* Technical Grid Background handled in dashboard layout, but good to reinforce or keep empty if handled above */}
+            {/* Assuming GridBackground is in DashboardLayout as seen in previous view_file */}
+
+            <PitchEditorToolbar />
+
+            {/* Scrollable Container */}
+            <div className="w-full h-full sm:pt-16 overflow-y-auto custom-scrollbar relative z-0">
+                <div className="w-full min-h-full flex items-center justify-center p-4 sm:p-8">
+                    <PitchCard />
                 </div>
             </div>
         </div>
