@@ -10,16 +10,14 @@ import { PitchFormValues } from "./schema"
 
 interface PitchEditorLayoutProps {
     pitchId: string
-    initialData?: any // Typed properly ideally, but for now specific
+    initialData: PitchFormValues
 }
 
 export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutProps) {
     // Note: pitchId will be used later for fetching/saving data
     // Fetch data server-side - Refactored to parent
 
-    if (!initialData) {
-        return <div>Error loading pitch</div>
-    }
+    // Data guaranteed by page component (Strict Fetching)
 
     return (
         <PitchFormProvider defaultValues={initialData} pitchId={pitchId}>

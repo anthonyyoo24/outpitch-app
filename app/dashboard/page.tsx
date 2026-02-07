@@ -9,15 +9,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     const params = await searchParams
 
     if (params.pitchId) {
-        let initialData
-        try {
-            initialData = await getPitch(params.pitchId)
-        } catch (error) {
-            console.error("Failed to fetch pitch:", error)
-            // fallback or error handling
-            // For now, let's allow it to be undefined/handled by layout? 
-            // Or just fail gracefully.
+        const initialData = await getPitch(params.pitchId)
+
+        if (!initialData) {
+            throw new Error("Pitch not found")
         }
+
         return <PitchEditorLayout pitchId={params.pitchId} initialData={initialData} />
     }
 
