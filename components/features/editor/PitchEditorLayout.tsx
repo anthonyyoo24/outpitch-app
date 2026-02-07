@@ -1,24 +1,41 @@
-"use client"
+
 
 import React from "react"
-import { PitchCard } from "./card/PitchCard"
+import { PitchEditCard } from "./card/PitchEditCard"
 import { PitchEditorToolbar } from "./PitchEditorToolbar"
+import { PitchFormProvider } from "./PitchFormProvider"
 
-export function PitchEditorLayout({ pitchId }: { pitchId: string }) {
+
+import { PitchFormValues } from "./schema"
+
+interface PitchEditorLayoutProps {
+    pitchId: string
+    initialData?: any // Typed properly ideally, but for now specific
+}
+
+export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutProps) {
     // Note: pitchId will be used later for fetching/saving data
+    // Fetch data server-side - Refactored to parent
+
+    if (!initialData) {
+        return <div>Error loading pitch</div>
+    }
+
     return (
-        <div className="flex-1 relative h-full overflow-hidden bg-[#FAFAFA]" data-pitch-id={pitchId}>
-            {/* Technical Grid Background handled in dashboard layout, but good to reinforce or keep empty if handled above */}
-            {/* Assuming GridBackground is in DashboardLayout as seen in previous view_file */}
+        <PitchFormProvider defaultValues={initialData} pitchId={pitchId}>
+            <div className="flex-1 relative h-full overflow-hidden bg-[#FAFAFA]" data-pitch-id={pitchId}>
+                {/* Technical Grid Background handled in dashboard layout, but good to reinforce or keep empty if handled above */}
+                {/* Assuming GridBackground is in DashboardLayout as seen in previous view_file */}
 
-            <PitchEditorToolbar />
+                <PitchEditorToolbar pitchId={pitchId} />
 
-            {/* Scrollable Container */}
-            <div className="w-full h-full sm:pt-16 overflow-y-auto custom-scrollbar relative z-0">
-                <div className="w-full min-h-full flex items-center justify-center p-4 sm:p-8">
-                    <PitchCard />
+                {/* Scrollable Container */}
+                <div className="w-full h-full sm:pt-16 overflow-y-auto custom-scrollbar relative z-0">
+                    <div className="w-full min-h-full flex items-center justify-center p-4 sm:p-8">
+                        <PitchEditCard />
+                    </div>
                 </div>
             </div>
-        </div>
+        </PitchFormProvider>
     )
 }
