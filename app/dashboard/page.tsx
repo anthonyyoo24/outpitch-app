@@ -2,17 +2,20 @@ import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { EmptyState } from "@/components/features/dashboard/EmptyState"
 import { PitchEditorLayout } from "@/components/features/editor/PitchEditorLayout"
+import { DashboardError } from "@/components/features/dashboard/DashboardError"
 
 import { getPitch } from "@/app/dashboard/editor/actions"
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ pitchId?: string }> }) {
     const params = await searchParams
 
+
+
     if (params.pitchId) {
         const initialData = await getPitch(params.pitchId)
 
         if (!initialData) {
-            throw new Error("Pitch not found")
+            return <DashboardError />
         }
 
         return <PitchEditorLayout pitchId={params.pitchId} initialData={initialData} />

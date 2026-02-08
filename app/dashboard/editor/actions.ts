@@ -1,9 +1,15 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
-import { PitchFormValues } from "@/components/features/editor/schema"
+import { PitchFormValues, pitchSchema } from "@/components/features/editor/schema"
 
 export async function getPitch(pitchId: string) {
+    const validation = pitchSchema.shape.id.safeParse(pitchId)
+
+    if (!validation.success) {
+        return null
+    }
+
     const supabase = await createClient()
 
     const { data, error } = await supabase

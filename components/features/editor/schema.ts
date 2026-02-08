@@ -2,7 +2,7 @@
 import { z } from "zod"
 
 export const pitchSchema = z.object({
-    id: z.string(),
+    id: z.string().uuid(),
     user_id: z.string(),
     company_name: z.string().min(1, "Company name is required"),
     role_title: z.string().min(1, "Role title is required"),
