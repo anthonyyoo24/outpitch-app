@@ -53,8 +53,20 @@ function Button({
   }) {
   const Comp = asChild ? Slot : "button"
 
+  if (asChild) {
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        disabled={props.disabled || isLoading}
+        {...props}
+      >
+        {children}
+      </Comp>
+    )
+  }
+
   return (
-    <Comp
+    <button
       className={cn(buttonVariants({ variant, size, className }))}
       disabled={props.disabled || isLoading}
       {...props}
@@ -80,7 +92,7 @@ function Button({
       <span className={isLoading ? "opacity-0" : "opacity-100"}>
         {children}
       </span>
-    </Comp>
+    </button>
   )
 }
 
