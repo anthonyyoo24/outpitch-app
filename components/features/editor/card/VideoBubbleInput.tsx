@@ -13,6 +13,7 @@ import { createClient } from "@/lib/supabase/client"
 export function VideoBubbleInput() {
     const { register, setValue, watch, getValues } = useFormContext()
     const [isUploading, setIsUploading] = useState(false)
+    const [isDragging, setIsDragging] = useState(false)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [previewType, setPreviewType] = useState<"video" | "image" | null>(null)
     const [userId, setUserId] = useState<string | null>(null)
@@ -42,8 +43,8 @@ export function VideoBubbleInput() {
     }, [initialVideoUrl, initialVideoType]) // eslint-disable-line react-hooks/exhaustive-deps
 
     // --- File Upload Handling ---
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
+    // --- File Upload Handling ---
+    const processFile = async (file: File) => {
         if (!file) return
 
         if (file.size > 50 * 1024 * 1024) {
@@ -87,6 +88,28 @@ export function VideoBubbleInput() {
         } finally {
             setIsUploading(false)
         }
+    }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) processFile(file)
+    }
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault()
+        setIsDragging(true)
+    }
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault()
+        setIsDragging(false)
+    }
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault()
+        setIsDragging(false)
+        const file = e.dataTransfer.files?.[0]
+        if (file) processFile(file)
     }
 
     // --- Embed Link Handling ---
@@ -147,7 +170,14 @@ export function VideoBubbleInput() {
             <input type="hidden" {...register("video_type")} />
 
             {/* 1. The Bubble (Display & Upload Zone) */}
-            <div className={`relative shrink-0 w-24 h-24 sm:w-36 sm:h-36 rounded-full shadow-xl border border-neutral-100 overflow-hidden bg-neutral-50 ring-1 ring-neutral-200 group transition-transform duration-500 ${hasContent ? 'rotate-0' : 'sm:rotate-2 hover:rotate-0'}`}>
+            <div
+                className={`relative shrink-0 w-24 h-24 sm:w-36 sm:h-36 rounded-full shadow-xl border overflow-hidden bg-neutral-50 ring-1 group transition-all duration-300
+                    ${isDragging ? 'border-indigo-500 ring-2 ring-indigo-500 scale-105' : 'border-neutral-100 ring-neutral-200'}
+                    ${hasContent && !isDragging ? 'rotate-0' : 'sm:rotate-2 hover:rotate-0'}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+            >
 
                 {/* A. Content State */}
                 {hasContent && (
