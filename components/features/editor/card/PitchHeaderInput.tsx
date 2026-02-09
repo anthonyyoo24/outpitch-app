@@ -8,6 +8,12 @@ import { TextStyle } from "@tiptap/extension-text-style"
 import { useFormContext } from "react-hook-form"
 import { Type, Bold, Italic, Underline as UnderlineIcon } from "lucide-react"
 import { Extension } from "@tiptap/core"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 // Custom extension to allow fontSize in textStyle
 const FontSize = Extension.create({
@@ -43,6 +49,8 @@ const FontSize = Extension.create({
 export function PitchHeaderInput() {
     const { setValue, watch } = useFormContext()
     const headerContent = watch("header_content")
+    const [currentFontSize, setCurrentFontSize] = React.useState("40px")
+
 
     const editor = useEditor({
         extensions: [
@@ -63,36 +71,52 @@ export function PitchHeaderInput() {
         immediatelyRender: false,
     })
 
+    const handleFontSizeChange = (size: string) => {
+        if (!editor) return
+
+        editor
+            .chain()
+            .focus()
+            .selectAll()
+            .setMark('textStyle', { fontSize: size })
+            .setTextSelection(editor.state.doc.content.size)
+            .run()
+
+        setCurrentFontSize(size)
+    }
+
     if (!editor) {
         return null
     }
 
     return (
-        <div className="flex flex-col pt-2 sm:pt-4 gap-6">
+        <div className="flex flex-col pt-2 sm:pt-4 gap-6" >
             <div className="w-full z-10">
                 <div className="flex flex-col transition-colors hover:border-neutral-300 hover:bg-neutral-50/80 group bg-neutral-50/40 border-neutral-200 border rounded-2xl sm:rounded-3xl p-4 sm:p-5 gap-3">
                     {/* Toolbar */}
                     <div className="flex items-center gap-3 border-b border-neutral-200 pb-3 overflow-x-auto no-scrollbar">
-                        <div className="relative flex items-center gap-1.5 pr-3 border-r border-neutral-200 shrink-0">
-                            <Type className="text-neutral-500 w-3 h-3" />
-                            <select
-                                className="bg-transparent text-[10px] text-neutral-500 font-mono focus:outline-none cursor-pointer hover:text-neutral-900 transition-colors"
-                                onChange={(e) => {
-                                    editor
-                                        .chain()
-                                        .focus()
-                                        .selectAll()
-                                        .setMark('textStyle', { fontSize: e.target.value })
-                                        .setTextSelection(editor.state.doc.content.size)
-                                        .run()
-                                }}
-                                defaultValue="40px"
-                            >
-                                <option value="40px">40px</option>
-                                <option value="32px">32px</option>
-                                <option value="24px">24px</option>
-                            </select>
-                        </div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    className="flex items-center gap-1.5 cursor-pointer text-[10px] text-neutral-500 font-mono hover:text-neutral-900 transition-colors focus:outline-none outline-none group/fontsize pr-3 border-r border-neutral-200 shrink-0 select-none"
+                                    type="button"
+                                >
+                                    <Type className="text-neutral-500 w-3 h-3 group-hover/fontsize:text-neutral-900 transition-colors" />
+                                    <span>{currentFontSize}</span>
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="min-w-16 p-1 bg-white border border-neutral-100 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+                                {['40px', '32px', '24px'].map((size) => (
+                                    <DropdownMenuItem
+                                        key={size}
+                                        onClick={() => handleFontSizeChange(size)}
+                                        className="w-full justify-center px-2 py-1.5 text-[10px] text-neutral-500 hover:text-neutral-900 focus:text-neutral-900 hover:bg-neutral-50 focus:bg-neutral-50 rounded-lg transition-colors font-mono cursor-pointer"
+                                    >
+                                        {size}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         <div className="flex items-center gap-1 shrink-0">
                             <button
                                 type="button"
@@ -125,6 +149,6 @@ export function PitchHeaderInput() {
                     <EditorContent editor={editor} />
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
