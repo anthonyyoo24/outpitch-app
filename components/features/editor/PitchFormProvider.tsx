@@ -2,10 +2,12 @@
 
 import React from "react"
 import { useForm, FormProvider, DefaultValues, Resolver } from "react-hook-form"
-import { DevTool } from "@hookform/devtools"
 import { zodResolver } from "@hookform/resolvers/zod"
+import dynamic from "next/dynamic"
 import { pitchSchema, PitchFormValues } from "./schema"
-import { AutoSave } from "./AutoSave"
+
+const AutoSave = dynamic(() => import("./AutoSave").then((mod) => mod.AutoSave), { ssr: false })
+const DevTool = dynamic(() => import("@hookform/devtools").then((mod) => mod.DevTool), { ssr: false })
 
 interface PitchFormProviderProps {
     children: React.ReactNode
@@ -25,7 +27,7 @@ export function PitchFormProvider({ children, defaultValues, pitchId }: PitchFor
             <AutoSave pitchId={pitchId} defaultValues={defaultValues} />
             <form onSubmit={(e) => e.preventDefault()} className="h-full flex flex-col">
                 {children}
-                <DevTool control={methods.control} />
+                <DevTool control={methods.control as any} />
             </form>
         </FormProvider>
     )
