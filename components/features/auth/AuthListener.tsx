@@ -4,22 +4,37 @@ import { useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
+import { useUserStore } from "@/lib/store/user-store"
 
 /**
- * An invisible component that synchronizes the auth user with the public profiles table.
- * It listens for successful logins and creates a profile row if one does not exist.
+ * A component that handles global authentication logic:
+ * 1. Synchronizes the Supabase auth state with the global Zustand store.
+ * 2. Checks for a user profile on login and creates one if missing.
  *
- * @component
+ * It renders nothing visible.
  */
-export function ProfileListener() {
+export function AuthListener() {
     const router = useRouter()
+    const setUser = useUserStore((state) => state.setUser)
 
     useEffect(() => {
         const supabase = createClient()
-        const checkProfile = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
 
+        // --- 1. Sync User State ---
+        // Initial check
+        supabase.auth.getUser().then(({ data }) => {
+            setUser(data.user)
+            if (data.user) checkProfile(data.user)
+        })
+
+        // Listen for changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null)
+            if (session?.user) checkProfile(session.user)
+        })
+
+        // --- 2. Profile Check Logic ---
+        const checkProfile = async (user: any) => {
             // Check if profile exists
             const { data: profile } = await supabase
                 .from('profiles')
@@ -29,7 +44,7 @@ export function ProfileListener() {
 
             if (!profile) {
                 // Create profile
-                const username = `user_${nanoid(8)}` // e.g. user_V1StGXr8
+                const username = `user_${nanoid(8)}`
                 const fullName = user.user_metadata.full_name || user.email?.split('@')[0]
 
                 const { error } = await supabase
@@ -49,8 +64,10 @@ export function ProfileListener() {
             }
         }
 
-        checkProfile()
-    }, [router])
+        return () => {
+            subscription.unsubscribe()
+        }
+    }, [setUser, router])
 
-    return null // This component is invisible
+    return null
 }

@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { Upload, Link as LinkIcon, X, Loader2 } from "lucide-react"
 
 import { uploadPitchVideo, deletePitchVideo } from "@/lib/storage/upload"
-import { createClient } from "@/lib/supabase/client"
+import { useUserStore } from "@/lib/store/user-store"
 
 export function VideoBubbleInput() {
     const { register, setValue, watch, getValues } = useFormContext()
@@ -16,19 +16,12 @@ export function VideoBubbleInput() {
     const [isDragging, setIsDragging] = useState(false)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [previewType, setPreviewType] = useState<"video" | "image" | null>(null)
-    const [userId, setUserId] = useState<string | null>(null)
+    const user = useUserStore((state) => state.user)
+    const userId = user?.id
 
     // Watch video_url to hydrate state if editing existing pitch
     const initialVideoUrl = watch("video_url")
     const initialVideoType = watch("video_type")
-
-    // Get current user for upload path
-    useEffect(() => {
-        const supabase = createClient()
-        supabase.auth.getUser().then(({ data }) => {
-            setUserId(data.user?.id || null)
-        })
-    }, [])
 
     // Hydrate preview on load
     useEffect(() => {

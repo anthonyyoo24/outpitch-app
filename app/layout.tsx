@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from "sonner";
-import { ProfileListener } from "@/components/features/auth/ProfileListener";
+import { AuthListener } from "@/components/features/auth/AuthListener";
 
 export default function RootLayout({
   children,
@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} antialiased font-sans`}>
         {children}
-        <ProfileListener />
+        <AuthListener />
         <Toaster />
       </body>
     </html>

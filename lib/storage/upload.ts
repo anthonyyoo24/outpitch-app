@@ -53,3 +53,60 @@ export async function deletePitchVideo(path: string) {
         // and we don't want to block the user flow for a cleanup error.
     }
 }
+
+/**
+ * Uploads an image file to the 'pitch-media' bucket.
+ * 
+ * @param file The file object to upload
+ * @param userId The ID of the user uploading the file
+ * @returns Object containing the public URL and storage path
+ */
+export async function uploadPitchImage(file: File, userId: string) {
+    const supabase = createClient()
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        throw new Error("Image file too large. Max 5MB.")
+    }
+
+    const fileExt = file.name.split(".").pop()
+    const fileName = `${nanoid()}.${fileExt}`
+    const filePath = `${userId}/${fileName}`
+
+    const { error } = await supabase.storage
+        .from("pitch-media")
+        .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: file.type
+        })
+
+    if (error) {
+        throw error
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+        .from("pitch-media")
+        .getPublicUrl(filePath)
+
+    return {
+        path: filePath,
+        publicUrl,
+    }
+}
+
+/**
+ * Deletes an image file from the 'pitch-media' bucket.
+ * 
+ * @param path The full storage path of the file to delete
+ */
+export async function deletePitchImage(path: string) {
+    const supabase = createClient()
+    const { error } = await supabase.storage
+        .from("pitch-media")
+        .remove([path])
+
+    if (error) {
+        console.error("Failed to delete image:", error)
+    }
+}
