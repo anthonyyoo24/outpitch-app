@@ -28,15 +28,15 @@ export function AutoSave({ pitchId, defaultValues }: AutoSaveProps) {
                 return
             }
 
-            // Check isDirty to avoid saving if the user hasn't touched the form
-            if (formState.isDirty) {
-                try {
-                    await updatePitch(pitchId, debouncedValues)
-                    console.log("Auto-saved")
-                    lastSavedRef.current = currentString
-                } catch (error) {
-                    console.error("Auto-save failed:", error)
-                }
+            // If currentString is different from lastSavedRef, we know the values have changed
+            // because of the check above
+
+            try {
+                await updatePitch(pitchId, debouncedValues)
+                console.log("Auto-saved")
+                lastSavedRef.current = currentString
+            } catch (error) {
+                console.error("Auto-save failed:", error)
             }
         }
 

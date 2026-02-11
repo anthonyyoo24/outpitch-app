@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react"
 import { Command } from "@/components/ui/command"
 import { TECH_STACK_DATA, TECH_SLUG_MAP } from "@/lib/constants/tech-stack-data"
 import { TechSearchInput } from "./TechSearchInput"
-import { TechDropdown } from "./TechDropdown"
+import { TechStackDropdown } from "./TechStackDropdown"
 
 interface TechStackPickerProps {
     selectedStack: string[]
@@ -17,6 +17,9 @@ export function TechStackPicker({ selectedStack, onSelect, onRemoveLast }: TechS
 
     // Manual filtering logic
     const filteredTech = useMemo(() => TECH_STACK_DATA.filter((item) => {
+        // Exclude already selected items
+        if (selectedStack.includes(item.name)) return false
+
         if (!inputValue) return true
         const normalizedValue = item.name.toLowerCase()
         const normalizedSearch = inputValue.toLowerCase()
@@ -26,7 +29,7 @@ export function TechStackPicker({ selectedStack, onSelect, onRemoveLast }: TechS
             if (word.startsWith(normalizedSearch)) return true
         }
         return false
-    }), [inputValue])
+    }), [inputValue, selectedStack])
 
     const showCreateOption = inputValue &&
         !selectedStack.includes(inputValue) &&
@@ -83,7 +86,7 @@ export function TechStackPicker({ selectedStack, onSelect, onRemoveLast }: TechS
 
                 {open && (
                     <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-xl border border-neutral-200 shadow-xl overflow-hidden z-50">
-                        <TechDropdown
+                        <TechStackDropdown
                             items={filteredTech}
                             techStack={selectedStack}
                             showCreateOption={!!showCreateOption}

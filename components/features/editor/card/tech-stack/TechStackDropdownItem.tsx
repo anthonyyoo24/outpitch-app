@@ -3,14 +3,14 @@ import { Check, Code, Plus } from "lucide-react"
 import Image from "next/image"
 import { TechItem } from "@/lib/constants/tech-stack-data"
 
-interface TechDropdownItemProps {
+interface TechStackDropdownItemProps {
     item: TechItem | { name: string; slug: string }
     isSelected?: boolean
     isCreateOption?: boolean
     onSelect: (value: string) => void
 }
 
-export function TechDropdownItem({ item, isSelected, isCreateOption, onSelect }: TechDropdownItemProps) {
+export function TechStackDropdownItem({ item, isSelected, isCreateOption, onSelect }: TechStackDropdownItemProps) {
     const renderContent = () => {
         if (isCreateOption) {
             return (

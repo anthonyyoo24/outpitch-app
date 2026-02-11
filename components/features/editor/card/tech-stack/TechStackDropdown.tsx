@@ -1,8 +1,8 @@
 import { CommandList, CommandEmpty, CommandGroup } from "@/components/ui/command"
-import { TechDropdownItem } from "./TechDropdownItem"
+import { TechStackDropdownItem } from "./TechStackDropdownItem"
 import { TechItem } from "@/lib/constants/tech-stack-data"
 
-interface TechDropdownProps {
+interface TechStackDropdownProps {
     items: TechItem[]
     techStack: string[]
     showCreateOption: boolean
@@ -10,7 +10,7 @@ interface TechDropdownProps {
     onSelect: (val: string) => void
 }
 
-export function TechDropdown({ items, techStack, showCreateOption, inputValue, onSelect }: TechDropdownProps) {
+export function TechStackDropdown({ items, techStack, showCreateOption, inputValue, onSelect }: TechStackDropdownProps) {
     return (
         <CommandList>
             <CommandEmpty className="py-2 px-2 text-sm text-neutral-500">No results found.</CommandEmpty>
@@ -18,7 +18,7 @@ export function TechDropdown({ items, techStack, showCreateOption, inputValue, o
             {items.length > 0 && (
                 <CommandGroup heading="Suggestions">
                     {items.map((item) => (
-                        <TechDropdownItem
+                        <TechStackDropdownItem
                             key={item.name}
                             item={item}
                             isSelected={techStack.includes(item.name)}
@@ -30,7 +30,7 @@ export function TechDropdown({ items, techStack, showCreateOption, inputValue, o
 
             {showCreateOption && (
                 <CommandGroup heading="Create new">
-                    <TechDropdownItem
+                    <TechStackDropdownItem
                         item={{ name: inputValue, slug: "" }}
                         isCreateOption
                         onSelect={onSelect}
