@@ -111,3 +111,8 @@ export const TECH_STACK_DATA: TechItem[] = [
     { name: "Obsidian", slug: "obsidian", category: "Productivity" },
     { name: "Loom", slug: "loom", category: "Productivity" },
 ]
+// Setup a Lookup Map for O(1) access to slugs & existence checks
+export const TECH_SLUG_MAP: Record<string, string> = TECH_STACK_DATA.reduce((acc, item) => {
+    acc[item.name.toLowerCase()] = item.slug
+    return acc
+}, {} as Record<string, string>)

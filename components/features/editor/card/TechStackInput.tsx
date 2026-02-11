@@ -1,17 +1,16 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useMemo } from "react"
 import { Search, X, Code, Check, Plus } from "lucide-react"
 import { useFormContext } from "react-hook-form"
 import { Command as CommandPrimitive } from "cmdk"
 import {
     Command,
     CommandList,
-    CommandEmpty,
     CommandGroup,
     CommandItem
 } from "@/components/ui/command"
-import { TECH_STACK_DATA } from "@/lib/constants/tech-stack-data"
+import { TECH_STACK_DATA, TECH_SLUG_MAP } from "@/lib/constants/tech-stack-data"
 
 export function TechStackInput() {
     const { setValue, watch } = useFormContext()
@@ -19,6 +18,24 @@ export function TechStackInput() {
     const [open, setOpen] = useState(false)
     const [inputValue, setInputValue] = useState("")
     const commandRef = useRef<HTMLDivElement>(null)
+
+    // Manual filtering logic (since we disabled cmdk's internal filter)
+    const filteredTech = useMemo(() => TECH_STACK_DATA.filter((item) => {
+        if (!inputValue) return true
+        const normalizedValue = item.name.toLowerCase()
+        const normalizedSearch = inputValue.toLowerCase()
+        if (normalizedValue.startsWith(normalizedSearch)) return true
+        const words = normalizedValue.split(" ")
+        for (const word of words) {
+            if (word.startsWith(normalizedSearch)) return true
+        }
+        return false
+    }), [inputValue])
+
+    const showCreateOption = inputValue &&
+        !techStack.includes(inputValue) &&
+        !TECH_SLUG_MAP[inputValue.toLowerCase()] &&
+        filteredTech.length === 0
 
     // Handle clicking outside to close
     useEffect(() => {
@@ -68,9 +85,9 @@ export function TechStackInput() {
 
     // Helper to get logo URL
     const getLogoUrl = (techName: string) => {
-        const item = TECH_STACK_DATA.find(t => t.name.toLowerCase() === techName.toLowerCase())
-        if (item?.slug) {
-            return `https://cdn.simpleicons.org/${item.slug}`
+        const slug = TECH_SLUG_MAP[techName.toLowerCase()]
+        if (slug) {
+            return `https://cdn.simpleicons.org/${slug}`
         }
         return null
     }
@@ -110,22 +127,7 @@ export function TechStackInput() {
             <div className="relative group" ref={commandRef}>
                 <Command
                     className="rounded-xl border border-neutral-200 overflow-visible bg-white shadow-sm"
-                    filter={(value, search) => {
-                        if (!search) return 1
-                        const normalizedValue = value.toLowerCase()
-                        const normalizedSearch = search.toLowerCase()
-
-                        // Check if full term starts with search
-                        if (normalizedValue.startsWith(normalizedSearch)) return 1
-
-                        // Check if any word starts with search
-                        const words = normalizedValue.split(" ")
-                        for (const word of words) {
-                            if (word.startsWith(normalizedSearch)) return 1
-                        }
-
-                        return 0
-                    }}
+                    shouldFilter={false}
                 >
                     <div className="flex items-center px-3" cmdk-input-wrapper="">
                         <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 text-neutral-400" />
@@ -145,48 +147,52 @@ export function TechStackInput() {
                     {open && (
                         <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-xl border border-neutral-200 shadow-xl overflow-hidden z-50">
                             <CommandList>
-                                <CommandEmpty className="py-2 px-2">
-                                    <button
-                                        type="button"
-                                        className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-neutral-100 cursor-pointer"
-                                        onClick={() => handleSelect(inputValue)}
-                                    >
-                                        <Plus className="h-4 w-4 text-neutral-500" />
-                                        <span className="font-mono">Create &quot;{inputValue}&quot;</span>
-                                    </button>
-                                </CommandEmpty>
+                                {filteredTech.length > 0 && (
+                                    <CommandGroup heading="Suggestions">
+                                        {filteredTech.map((item) => (
+                                            <CommandItem
+                                                key={item.name}
+                                                value={item.name}
+                                                onSelect={() => {
+                                                    // items in cmdk are lowercased by default logic often, but we pass simple name
+                                                    // we want the Title Case name
+                                                    handleSelect(item.name)
+                                                }}
+                                                className="font-mono cursor-pointer"
+                                            >
+                                                <div className="flex items-center gap-2 w-full">
+                                                    <img
+                                                        src={`https://cdn.simpleicons.org/${item.slug}`}
+                                                        alt={item.name}
+                                                        className="w-4 h-4 object-contain"
+                                                        onError={(e) => {
+                                                            e.currentTarget.style.display = 'none'
+                                                            e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                                                        }}
+                                                    />
+                                                    <Code className="w-4 h-4 text-neutral-400 hidden" />
+                                                    <span>{item.name}</span>
+                                                    {techStack.includes(item.name) && (
+                                                        <Check className="ml-auto w-4 h-4 text-neutral-400" />
+                                                    )}
+                                                </div>
+                                            </CommandItem>
+                                        ))}
+                                    </CommandGroup>
+                                )}
 
-                                <CommandGroup heading="Suggestions">
-                                    {TECH_STACK_DATA.map((item) => (
+                                {showCreateOption && (
+                                    <CommandGroup heading="Create new">
                                         <CommandItem
-                                            key={item.name}
-                                            value={item.name}
-                                            onSelect={() => {
-                                                // items in cmdk are lowercased by default logic often, but we pass simple name
-                                                // we want the Title Case name
-                                                handleSelect(item.name)
-                                            }}
+                                            value={inputValue}
+                                            onSelect={() => handleSelect(inputValue)}
                                             className="font-mono cursor-pointer"
                                         >
-                                            <div className="flex items-center gap-2 w-full">
-                                                <img
-                                                    src={`https://cdn.simpleicons.org/${item.slug}`}
-                                                    alt={item.name}
-                                                    className="w-4 h-4 object-contain"
-                                                    onError={(e) => {
-                                                        e.currentTarget.style.display = 'none'
-                                                        e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                                                    }}
-                                                />
-                                                <Code className="w-4 h-4 text-neutral-400 hidden" />
-                                                <span>{item.name}</span>
-                                                {techStack.includes(item.name) && (
-                                                    <Check className="ml-auto w-4 h-4 text-neutral-400" />
-                                                )}
-                                            </div>
+                                            <Plus className="mr-2 h-4 w-4 text-neutral-500" />
+                                            Create &quot;{inputValue}&quot;
                                         </CommandItem>
-                                    ))}
-                                </CommandGroup>
+                                    </CommandGroup>
+                                )}
                             </CommandList>
                         </div>
                     )}
