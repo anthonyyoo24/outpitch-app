@@ -260,7 +260,7 @@ export function VideoBubbleInput() {
                         value={linkInput}
                         onChange={(e) => setLinkInput(e.target.value)}
                         disabled={isUploading}
-                        className="block w-full pl-8 pr-3 py-2 border border-neutral-200 rounded-full text-xs placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-300 focus:border-neutral-300 bg-white/50 text-center transition-all"
+                        className="block w-full pl-9 pr-3 py-2.5 border border-neutral-300 rounded-2xl text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-400 focus:bg-white focus:shadow-sm bg-neutral-50/50 hover:border-neutral-400 transition-all font-mono"
                     />
                 </div>
             </div>

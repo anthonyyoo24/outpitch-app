@@ -92,7 +92,7 @@ export function PitchHeaderInput() {
     return (
         <div className="flex flex-col pt-2 sm:pt-4 gap-6" >
             <div className="w-full z-10">
-                <div className="flex flex-col transition-colors hover:border-neutral-300 hover:bg-neutral-50/80 group bg-neutral-50/40 border-neutral-200 border rounded-2xl sm:rounded-3xl p-4 sm:p-5 gap-3">
+                <div className="flex flex-col transition-colors hover:border-neutral-400 focus-within:border-neutral-400 focus-within:bg-white focus-within:shadow-sm group bg-neutral-50/50 border-neutral-300 border rounded-2xl sm:rounded-3xl p-4 sm:p-5 gap-3">
                     {/* Toolbar */}
                     <div className="flex items-center gap-3 border-b border-neutral-200 pb-3 overflow-x-auto no-scrollbar">
                         <DropdownMenu>

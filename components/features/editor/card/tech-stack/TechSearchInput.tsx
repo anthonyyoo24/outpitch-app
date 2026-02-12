@@ -11,7 +11,7 @@ interface TechSearchInputProps {
 export function TechSearchInput({ value, onValueChange, onFocus, onKeyDown }: TechSearchInputProps) {
     return (
         <div className="flex items-center px-3" cmdk-input-wrapper="">
-            <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 text-neutral-400" />
+            <Search className="mr-2 h-4 w-4 shrink-0 text-neutral-400" />
             <CommandPrimitive.Input
                 value={value}
                 onValueChange={onValueChange}
