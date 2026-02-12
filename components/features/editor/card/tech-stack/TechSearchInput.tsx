@@ -17,7 +17,7 @@ export function TechSearchInput({ value, onValueChange, onFocus, onKeyDown }: Te
                 onValueChange={onValueChange}
                 onFocus={onFocus}
                 onKeyDown={onKeyDown}
-                className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-neutral-400 font-mono disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-11 w-full rounded-md bg-transparent py-3 text-xs outline-none placeholder:text-neutral-400 font-mono disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder="Search stack (e.g. React, Figma, Salesforce)..."
             />
         </div>

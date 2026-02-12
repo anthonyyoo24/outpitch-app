@@ -30,7 +30,7 @@ export function TechStackInput() {
                 Tech Stack
             </h3>
 
-            <div className="flex flex-wrap gap-2 mb-3">
+            <div className={`flex flex-wrap gap-2 ${techStack.length > 0 && "mb-3"}`}>
                 {techStack.map((tech: string) => (
                     <TechTag key={tech} name={tech} onRemove={handleRemove} />
                 ))}
