@@ -5,7 +5,7 @@ import { PitchHeaderInput } from "./PitchHeaderInput"
 import { VideoBubbleInput } from "./VideoBubbleInput"
 import { PitchBioInput } from "./PitchBioInput"
 import { SelectedWorkInput } from "./SelectedWorkInput"
-import { TechStackInput } from "./TechStackInput"
+import { TechStackInput } from "./tech-stack/TechStackInput"
 import { JourneyInput } from "./JourneyInput"
 import { ContactSocialsInput } from "./ContactSocialsInput"
 
