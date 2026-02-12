@@ -71,7 +71,7 @@ export function TechStackPicker({ selectedStack, onSelect, onRemoveLast }: TechS
     return (
         <div className="relative group" ref={commandRef}>
             <Command
-                className="rounded-xl border border-neutral-200 overflow-visible bg-white shadow-sm"
+                className="rounded-xl border border-neutral-200 bg-neutral-50/40 hover:bg-neutral-50/80 w-full overflow-visible focus:border-neutral-300 focus:outline-none focus:bg-white hover:border-neutral-300"
                 shouldFilter={false}
             >
                 <TechSearchInput
