@@ -7,7 +7,9 @@ import { PitchBioInput } from "./PitchBioInput"
 import { SelectedWorkInput } from "./SelectedWorkInput"
 import { TechStackInput } from "./tech-stack/TechStackInput"
 import { JourneyInput } from "./JourneyInput"
-import { ContactSocialsInput } from "./ContactSocialsInput"
+import { ContactInput } from "./contact/ContactInput"
+import { SocialsInput } from "./contact/SocialsInput"
+import { ResumeInput } from "./contact/ResumeInput"
 
 export function PitchEditCard() {
     return (
@@ -19,7 +21,9 @@ export function PitchEditCard() {
                 <SelectedWorkInput />
                 <TechStackInput />
                 <JourneyInput />
-                <ContactSocialsInput />
+                <ContactInput />
+                <SocialsInput />
+                <ResumeInput />
             </div>
         </div>
     )
