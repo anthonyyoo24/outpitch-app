@@ -19,7 +19,7 @@ export function ContactInput() {
                     <input
                         {...register("contact.calendly_link")}
                         type="url"
-                        className="flex-1 bg-transparent border-none text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none py-2.5 font-mono transition-[background-color] duration-[9999s] ease-in-out [-webkit-text-fill-color:#171717]"
+                        className="flex-1 bg-transparent border-none text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none py-2.5 font-mono transition-[background-color] duration-[9999s] ease-in-out"
                         placeholder="Calendly or scheduling link"
                     />
                 </div>
@@ -30,7 +30,7 @@ export function ContactInput() {
                     <input
                         {...register("contact.email")}
                         type="email"
-                        className="flex-1 bg-transparent border-none text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none py-2.5 font-mono transition-[background-color] duration-[9999s] ease-in-out [-webkit-text-fill-color:#171717]"
+                        className="flex-1 bg-transparent border-none text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none py-2.5 font-mono transition-[background-color] duration-[9999s] ease-in-out"
                         placeholder="Email address"
                     />
                 </div>
