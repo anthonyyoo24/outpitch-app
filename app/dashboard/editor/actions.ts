@@ -47,7 +47,16 @@ export async function getPitch(pitchId: string) {
 
         header_content: (data as any).header_content || "",
         tech_stack: data.tech_stack || [],
-        work_experience: data.work_experience || [],
+        work_experience: ((data.work_experience as any[]) || []).map((item: any) => ({
+            role: item.role || "",
+            company: item.company || "",
+            start_month: item.start_month || "",
+            start_year: item.start_year || "",
+            end_month: item.end_month || "",
+            end_year: item.end_year || "",
+            is_current: item.is_current || false,
+            description: item.description || "",
+        })),
         portfolio: data.portfolio || [],
 
         // Social Links (email removed from here in UI)

@@ -27,7 +27,16 @@ export function JourneyInput() {
 
                 <button
                     type="button"
-                    onClick={() => append({ role: "", company: "", date_range: "", description: "" })}
+                    onClick={() => append({
+                        role: "",
+                        company: "",
+                        start_month: "",
+                        start_year: "",
+                        end_month: "",
+                        end_year: "",
+                        is_current: false,
+                        description: ""
+                    })}
                     className="w-full py-3 rounded-xl border border-dashed border-neutral-400 text-neutral-500 hover:text-neutral-900 hover:border-neutral-500 hover:bg-neutral-50 transition-all flex items-center justify-center gap-2 text-xs font-medium font-mono group"
                 >
                     <CirclePlus className="w-4 h-4 group-hover:scale-110 transition-transform" />

@@ -1,7 +1,5 @@
-"use client"
-
-import React, { useEffect } from "react"
-import { useFormContext, useWatch } from "react-hook-form"
+import React from "react"
+import { useFormContext, useWatch, Controller } from "react-hook-form"
 import { Trash2, ChevronDown } from "lucide-react"
 import {
     DropdownMenu,
@@ -24,49 +22,13 @@ const MONTHS = [
 const YEARS = Array.from({ length: 30 }, (_, i) => (new Date().getFullYear() - i).toString())
 
 export function JourneyItem({ index, remove }: JourneyItemProps) {
-    const { register, setValue, control } = useFormContext()
+    const { register, control } = useFormContext()
 
-    // Watch specific fields for this item to handle logic
+    // Watch is_current specifically for logic
     const isCurrent = useWatch({
         control,
         name: `work_experience.${index}.is_current`,
     })
-
-    const startMonth = useWatch({
-        control,
-        name: `work_experience.${index}.start_month`
-    })
-    const startYear = useWatch({
-        control,
-        name: `work_experience.${index}.start_year`
-    })
-    const endMonth = useWatch({
-        control,
-        name: `work_experience.${index}.end_month`
-    })
-    const endYear = useWatch({
-        control,
-        name: `work_experience.${index}.end_year`
-    })
-
-    // Sync to legacy date_range field for backward compatibility
-    useEffect(() => {
-        const start = (startMonth && startYear) ? `${startMonth.slice(0, 3)} ${startYear}` : startYear || ""
-        let end = ""
-
-        if (isCurrent) {
-            end = "Present"
-        } else if (endMonth && endYear) {
-            end = `${endMonth.slice(0, 3)} ${endYear}`
-        } else if (endYear) {
-            end = endYear
-        }
-
-        if (start) {
-            const range = end ? `${start} - ${end}` : start
-            setValue(`work_experience.${index}.date_range`, range)
-        }
-    }, [startMonth, startYear, endMonth, endYear, isCurrent, index, setValue])
 
     return (
         <div className="relative group">
@@ -116,19 +78,31 @@ export function JourneyItem({ index, remove }: JourneyItemProps) {
                                 Start Date
                             </p>
                             <div className="flex gap-2">
-                                <DateSelect
-                                    value={startMonth}
-                                    onChange={(val) => setValue(`work_experience.${index}.start_month`, val)}
-                                    options={MONTHS}
-                                    placeholder="Month"
-                                    className="w-full flex-1 cursor-pointer"
+                                <Controller
+                                    control={control}
+                                    name={`work_experience.${index}.start_month`}
+                                    render={({ field }) => (
+                                        <DateSelect
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            options={MONTHS}
+                                            placeholder="Month"
+                                            className="w-full flex-1 cursor-pointer"
+                                        />
+                                    )}
                                 />
-                                <DateSelect
-                                    value={startYear}
-                                    onChange={(val) => setValue(`work_experience.${index}.start_year`, val)}
-                                    options={YEARS}
-                                    placeholder="Year"
-                                    className="w-full flex-1 cursor-pointer"
+                                <Controller
+                                    control={control}
+                                    name={`work_experience.${index}.start_year`}
+                                    render={({ field }) => (
+                                        <DateSelect
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            options={YEARS}
+                                            placeholder="Year"
+                                            className="w-full flex-1 cursor-pointer"
+                                        />
+                                    )}
                                 />
                             </div>
                         </div>
@@ -139,21 +113,33 @@ export function JourneyItem({ index, remove }: JourneyItemProps) {
                                 End Date
                             </p>
                             <div className="flex gap-2">
-                                <DateSelect
-                                    value={endMonth}
-                                    onChange={(val) => setValue(`work_experience.${index}.end_month`, val)}
-                                    options={MONTHS}
-                                    placeholder="Month"
-                                    className="w-full flex-1 cursor-pointer"
-                                    disabled={isCurrent}
+                                <Controller
+                                    control={control}
+                                    name={`work_experience.${index}.end_month`}
+                                    render={({ field }) => (
+                                        <DateSelect
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            options={MONTHS}
+                                            placeholder="Month"
+                                            className="w-full flex-1 cursor-pointer"
+                                            disabled={isCurrent}
+                                        />
+                                    )}
                                 />
-                                <DateSelect
-                                    value={endYear}
-                                    onChange={(val) => setValue(`work_experience.${index}.end_year`, val)}
-                                    options={YEARS}
-                                    placeholder="Year"
-                                    className="w-full flex-1 cursor-pointer"
-                                    disabled={isCurrent}
+                                <Controller
+                                    control={control}
+                                    name={`work_experience.${index}.end_year`}
+                                    render={({ field }) => (
+                                        <DateSelect
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            options={YEARS}
+                                            placeholder="Year"
+                                            className="w-full flex-1 cursor-pointer"
+                                            disabled={isCurrent}
+                                        />
+                                    )}
                                 />
                             </div>
                         </div>
@@ -164,7 +150,7 @@ export function JourneyItem({ index, remove }: JourneyItemProps) {
                 <textarea
                     {...register(`work_experience.${index}.description`)}
                     rows={1}
-                    className="w-full bg-transparent border-b border-neutral-200 text-xs text-neutral-500 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 transition-colors resize-none leading-relaxed min-h-[24px]"
+                    className="w-full bg-transparent border-b border-neutral-200 text-xs text-neutral-500 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 transition-colors resize-none leading-relaxed min-h-6"
                     placeholder="Description"
                 />
             </div>
@@ -205,7 +191,7 @@ function DateSelect({
                     <ChevronDown className="w-2.5 h-2.5 text-neutral-400 transition-transform duration-300 group-data-[state=open]/select:rotate-180 shrink-0 ml-1" />
                 </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="h-48 overflow-y-auto bg-white border border-neutral-100 rounded-xl shadow-2xl p-1 custom-scrollbar min-w-[100px]">
+            <DropdownMenuContent className="h-48 overflow-y-auto bg-white border border-neutral-100 rounded-xl shadow-2xl p-1 custom-scrollbar min-w-24">
                 {options.map((option) => (
                     <DropdownMenuItem
                         key={option}

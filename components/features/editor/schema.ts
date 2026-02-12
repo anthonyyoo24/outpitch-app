@@ -22,7 +22,11 @@ export const pitchSchema = z.object({
         z.object({
             role: z.string(),
             company: z.string(),
-            date_range: z.string(),
+            start_month: z.string().optional(),
+            start_year: z.string().optional(),
+            end_month: z.string().optional(),
+            end_year: z.string().optional(),
+            is_current: z.boolean().optional(),
             description: z.string(),
         })
     ).optional(),
