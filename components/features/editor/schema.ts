@@ -34,14 +34,10 @@ export const pitchSchema = z.object({
         email: z.union([z.email("Please enter a valid email address"), z.literal("")]),
         calendly_link: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
     }),
-    social_links: z.object({
-        linkedin: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
-        twitter: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
-        website: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
-        github: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
-        instagram: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
-        tiktok: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
-    }).optional(),
+    social_links: z.array(z.object({
+        platform: z.enum(["linkedin", "twitter", "github", "instagram", "tiktok", "website", ""]),
+        url: z.union([z.url("Please enter a valid URL"), z.literal("")]),
+    })).optional(),
     resume_url: z.string().optional().nullable(),
     status: z.enum(["draft", "published"]).default("draft"),
 })
