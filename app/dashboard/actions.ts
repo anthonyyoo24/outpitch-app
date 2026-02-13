@@ -33,7 +33,9 @@ export async function createPitchAction(formData: FormData) {
         user_id: user.id,
         company_name: companyName,
         role_title: roleTitle,
-        status: 'draft'
+        status: 'draft',
+        email: '',
+        header_content: '',
     }).select('id').single()
 
     if (error) {

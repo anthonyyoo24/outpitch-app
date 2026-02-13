@@ -6,8 +6,8 @@ export const pitchSchema = z.object({
     user_id: z.string(),
     company_name: z.string().min(1, "Company name is required"),
     role_title: z.string().min(1, "Role title is required"),
-    header_content: z.string().min(1, "Header content is required"), // HTML string for the rich text header
-    video_url: z.string().min(1, "Video URL is required"),
+    header_content: z.string(), // HTML string for the rich text header
+    video_url: z.string(),
     bio: z.string().optional(),
     portfolio: z.array(
         z.object({

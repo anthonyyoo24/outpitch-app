@@ -22,15 +22,8 @@ export async function getPitch(pitchId: string) {
         throw new Error(error.message)
     }
 
-    // Map DB fields to Form Schema
-    // Note: JSONB fields come back as objects, so we cast them.
-    // Ensure fallback values for arrays if null
-
-    // DB Column "email" exists now. 
-    // social_links jsonb column still holds other socials.
-    const socialLinks = (data.social_links || {}) as any
-
-    return {
+    // 1. Construct the raw object from DB data
+    const rawPitch = {
         id: data.id,
         user_id: data.user_id,
         company_name: data.company_name || "",
@@ -38,37 +31,26 @@ export async function getPitch(pitchId: string) {
         bio: data.bio || "",
         video_url: data.video_url || "",
         resume_url: data.resume_url || "",
+        status: data.status || "draft",
 
         // New structure: Contact object
         contact: {
-            email: (data as any).email || socialLinks.email || "", // Fallback to JSON if column empty (migration period)
+            email: data.email || "",
             calendly_link: data.calendly_link || "",
         },
 
-        header_content: (data as any).header_content || "",
+        header_content: data.header_content || "",
         tech_stack: data.tech_stack || [],
-        work_experience: ((data.work_experience as any[]) || []).map((item: any) => ({
-            role: item.role || "",
-            company: item.company || "",
-            start_month: item.start_month || "",
-            start_year: item.start_year || "",
-            end_month: item.end_month || "",
-            end_year: item.end_year || "",
-            is_current: item.is_current || false,
-            description: item.description || "",
-        })),
+        work_experience: data.work_experience ?? [],
         portfolio: data.portfolio || [],
+        social_links: data.social_links ?? []
+    }
 
-        // Social Links (email removed from here in UI)
-        social_links: {
-            linkedin: socialLinks.linkedin || "",
-            website: socialLinks.website || "",
-            twitter: socialLinks.twitter || "",
-            github: socialLinks.github || "",
-            instagram: socialLinks.instagram || "",
-            tiktok: socialLinks.tiktok || "",
-        }
-    } as PitchFormValues
+    // 2. Parse it through the schema
+    // This throws an error if data is invalid, or returns typed data if valid.
+    const parsedPitch = pitchSchema.parse(rawPitch)
+
+    return parsedPitch
 }
 
 export async function updatePitch(pitchId: string, values: PitchFormValues) {
@@ -113,6 +95,9 @@ export async function updatePitch(pitchId: string, values: PitchFormValues) {
 
 export async function publishPitch(pitchId: string) {
     const supabase = await createClient()
+
+    // TODO: Add strict validation here before publishing.
+    // Ensure email and header_content (and other mandatory fields) are present and valid.
 
     const { error } = await supabase
         .from("pitches")
