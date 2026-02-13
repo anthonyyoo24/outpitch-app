@@ -8,7 +8,7 @@ import { SocialLinkItem } from "./SocialLinkItem"
 import { PlatformId } from "./constants"
 
 export function SocialsInput() {
-    const { control, register, getValues } = useFormContext<PitchFormValues>()
+    const { control, register, getValues, formState: { errors } } = useFormContext<PitchFormValues>()
     const { fields, append, remove, update } = useFieldArray({
         control,
         name: "social_links",
@@ -34,6 +34,7 @@ export function SocialsInput() {
                     // TS sometimes struggles with strict unions in arrays
                     const platformId = field.platform as PlatformId
                     const isDropdownOpen = openDropdownIndex === index
+                    const error = errors.social_links?.[index]?.url?.message
 
                     return (
                         <SocialLinkItem
@@ -47,6 +48,7 @@ export function SocialsInput() {
                             isOpen={isDropdownOpen}
                             onToggle={() => setOpenDropdownIndex(isDropdownOpen ? null : index)}
                             onClose={() => setOpenDropdownIndex(null)}
+                            error={error}
                         />
                     )
                 })}
