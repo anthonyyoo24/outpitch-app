@@ -3,9 +3,17 @@
 import React from "react"
 import { Calendar, Mail } from "lucide-react"
 import { useFormContext } from "react-hook-form"
+import { PitchFormValues } from "../../schema"
+import { ValidationTooltip } from "../validation/ValidationTooltip"
 
 export function ContactInput() {
-    const { register } = useFormContext()
+    const {
+        register,
+        formState: { errors },
+    } = useFormContext<PitchFormValues>()
+
+    const calendlyError = errors.contact?.calendly_link?.message
+    const emailError = errors.contact?.email?.message
 
     return (
         <div className="mt-6 sm:mt-8 space-y-4">
@@ -14,8 +22,16 @@ export function ContactInput() {
             </h3>
             <div className="grid gap-3">
                 {/* Calendly Link */}
-                <div className="group relative flex items-center gap-3 p-1.5 pl-3 rounded-2xl border border-neutral-300 bg-neutral-50/50 hover:border-neutral-400 transition-colors focus-within:border-neutral-400 focus-within:bg-white focus-within:shadow-sm">
-                    <Calendar className="w-4.5 h-4.5 text-neutral-400" />
+                <div
+                    className={`group relative flex items-center gap-3 p-1.5 pl-3 rounded-2xl border bg-neutral-50/50 transition-colors focus-within:bg-white focus-within:shadow-sm ${calendlyError
+                        ? "border-red-500 focus-within:border-red-500"
+                        : "border-neutral-300 hover:border-neutral-400 focus-within:border-neutral-400"
+                        }`}
+                >
+                    <ValidationTooltip error={calendlyError} />
+                    <Calendar
+                        className={`w-4.5 h-4.5 ${calendlyError ? "text-red-500" : "text-neutral-400"}`}
+                    />
                     <input
                         {...register("contact.calendly_link")}
                         type="url"
@@ -25,8 +41,14 @@ export function ContactInput() {
                 </div>
 
                 {/* Email Address */}
-                <div className="group relative flex items-center gap-3 p-1.5 pl-3 rounded-2xl border border-neutral-300 bg-neutral-50/50 hover:border-neutral-400 transition-colors focus-within:border-neutral-400 focus-within:bg-white focus-within:shadow-sm">
-                    <Mail className="w-4.5 h-4.5 text-neutral-400" />
+                <div
+                    className={`group relative flex items-center gap-3 p-1.5 pl-3 rounded-2xl border bg-neutral-50/50 transition-colors focus-within:bg-white focus-within:shadow-sm ${emailError
+                        ? "border-red-500 focus-within:border-red-500"
+                        : "border-neutral-300 hover:border-neutral-400 focus-within:border-neutral-400"
+                        }`}
+                >
+                    <ValidationTooltip error={emailError} />
+                    <Mail className={`w-4.5 h-4.5 ${emailError ? "text-red-500" : "text-neutral-400"}`} />
                     <input
                         {...register("contact.email")}
                         type="email"

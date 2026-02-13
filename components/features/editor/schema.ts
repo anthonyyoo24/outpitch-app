@@ -13,7 +13,7 @@ export const pitchSchema = z.object({
         z.object({
             title: z.string(),
             description: z.string(),
-            link: z.string().url().optional().or(z.literal("")),
+            link: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
             image_url: z.string().optional().nullable(),
         })
     ).optional(),
@@ -31,16 +31,16 @@ export const pitchSchema = z.object({
         })
     ).optional(),
     contact: z.object({
-        email: z.string().email("Invalid email address"),
-        calendly_link: z.string().url().optional().or(z.literal("")),
+        email: z.union([z.email("Please enter a valid email address"), z.literal("")]),
+        calendly_link: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
     }),
     social_links: z.object({
-        linkedin: z.string().url().optional().or(z.literal("")),
-        twitter: z.string().url().optional().or(z.literal("")),
-        website: z.string().url().optional().or(z.literal("")),
-        github: z.string().url().optional().or(z.literal("")),
-        instagram: z.string().url().optional().or(z.literal("")),
-        tiktok: z.string().url().optional().or(z.literal("")),
+        linkedin: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
+        twitter: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
+        website: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
+        github: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
+        instagram: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
+        tiktok: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
     }).optional(),
     resume_url: z.string().optional().nullable(),
     status: z.enum(["draft", "published"]).default("draft"),

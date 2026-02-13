@@ -20,6 +20,7 @@ export function PitchFormProvider({ children, defaultValues, pitchId }: PitchFor
         resolver: zodResolver(pitchSchema) as Resolver<PitchFormValues>,
         defaultValues,
         mode: "onChange",
+        delayError: 1000,
     })
 
     return (
