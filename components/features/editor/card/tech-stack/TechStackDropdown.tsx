@@ -1,4 +1,4 @@
-import { CommandList, CommandEmpty, CommandGroup } from "@/components/ui/command"
+import { CommandList, CommandEmpty, CommandGroup } from "@/components/ui/Command"
 import { TechStackDropdownItem } from "./TechStackDropdownItem"
 import { TechItem } from "@/lib/constants/tech-stack-data"
 

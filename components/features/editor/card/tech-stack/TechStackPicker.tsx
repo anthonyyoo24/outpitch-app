@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from "react"
-import { Command } from "@/components/ui/command"
+import { Command } from "@/components/ui/Command"
 import { TECH_STACK_DATA, TECH_SLUG_MAP } from "@/lib/constants/tech-stack-data"
 import { TechSearchInput } from "./TechSearchInput"
 import { TechStackDropdown } from "./TechStackDropdown"

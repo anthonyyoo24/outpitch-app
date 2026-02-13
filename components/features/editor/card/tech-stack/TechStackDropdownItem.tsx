@@ -1,4 +1,4 @@
-import { CommandItem } from "@/components/ui/command"
+import { CommandItem } from "@/components/ui/Command"
 import { Check, Code, Plus } from "lucide-react"
 import Image from "next/image"
 import { TechItem } from "@/lib/constants/tech-stack-data"
