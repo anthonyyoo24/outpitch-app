@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useCallback } from "react"
 import { useFormContext, DefaultValues } from "react-hook-form"
-import { useDebounce } from "use-debounce"
 import { updatePitch } from "@/app/dashboard/editor/actions"
 import { PitchFormValues } from "./schema"
 
@@ -12,38 +11,48 @@ interface AutoSaveProps {
 }
 
 export function AutoSave({ pitchId, defaultValues }: AutoSaveProps) {
-    const { watch, formState } = useFormContext<PitchFormValues>()
-    // Watch form values - this component will re-render on change, but the parent won't
-    const values = watch()
-    const [debouncedValues] = useDebounce(values, 1000)
+    const { watch } = useFormContext<PitchFormValues>()
 
     // Store defaultValues as string for comparison
     const lastSavedRef = useRef<string>(JSON.stringify(defaultValues))
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-    useEffect(() => {
-        const save = async () => {
-            // Only save if data has actually changed from what we last saved
-            const currentString = JSON.stringify(debouncedValues)
-            if (currentString === lastSavedRef.current) {
-                return
-            }
-
-            // If currentString is different from lastSavedRef, we know the values have changed
-            // because of the check above
-
-            try {
-                await updatePitch(pitchId, debouncedValues)
-                console.log("Auto-saved")
-                lastSavedRef.current = currentString
-            } catch (error) {
-                console.error("Auto-save failed:", error)
-            }
+    const save = useCallback(async (values: PitchFormValues) => {
+        const currentString = JSON.stringify(values)
+        if (currentString === lastSavedRef.current) {
+            return
         }
 
-        // Save if we have values
-        if (debouncedValues) save()
+        try {
+            await updatePitch(pitchId, values)
+            console.log("Auto-saved")
+            lastSavedRef.current = currentString
+        } catch (error) {
+            console.error("Auto-save failed:", error)
+        }
+    }, [pitchId])
 
-    }, [debouncedValues, pitchId, formState.isDirty])
+    useEffect(() => {
+        // Subscribe to form changes via watch callback — runs only inside useEffect (after mount)
+        const subscription = watch((values) => {
+            // Clear previous timer
+            if (timerRef.current) {
+                clearTimeout(timerRef.current)
+            }
+
+            // Debounce: wait 1s after last change before saving
+            timerRef.current = setTimeout(() => {
+                save(values as PitchFormValues)
+            }, 1000)
+        })
+
+        return () => {
+            subscription.unsubscribe()
+            if (timerRef.current) {
+                clearTimeout(timerRef.current)
+            }
+        }
+    }, [watch, save])
 
     return null
 }
