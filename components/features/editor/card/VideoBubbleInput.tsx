@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState, useCallback, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useFormContext } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 import { toast } from "sonner"
@@ -19,21 +19,68 @@ export function VideoBubbleInput() {
     const user = useUserStore((state) => state.user)
     const userId = user?.id
 
-    // Watch video_url to hydrate state if editing existing pitch
-    const initialVideoUrl = watch("video_url")
-    const initialVideoType = watch("video_type")
+    // Watch form state
+    const videoUrl = watch("video_url")
+    const videoType = watch("video_type")
+    const [debouncedVideoUrl] = useDebounce(videoUrl, 500)
 
-    // Hydrate preview on load
+    // Sync preview with form state
     useEffect(() => {
-        if (initialVideoUrl && !previewUrl) {
-            if (initialVideoType === 'upload') {
-                setPreviewUrl(initialVideoUrl)
-                setPreviewType('video')
-            } else {
-                setPreviewThumbnail(initialVideoUrl)
+        if (isUploading) return
+
+        if (!debouncedVideoUrl) {
+            setPreviewUrl(null)
+            setPreviewType(null)
+            if (videoType && videoType !== 'upload') {
+                setValue("video_type", null)
             }
+            return
         }
-    }, [initialVideoUrl, initialVideoType]) // eslint-disable-line react-hooks/exhaustive-deps
+
+        // If it's an upload, the URL is the source
+        if (videoType === 'upload') {
+            setPreviewUrl(debouncedVideoUrl)
+            setPreviewType('video')
+            return
+        }
+
+        // 1. YouTube
+        const youtubeMatch = debouncedVideoUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)
+        if (youtubeMatch) {
+            const id = youtubeMatch[1]
+            const thumb = `https://img.youtube.com/vi/${id}/0.jpg`
+            setPreviewUrl(thumb)
+            setPreviewType("image")
+            setValue("video_type", "youtube")
+            return
+        }
+
+        // 2. Loom
+        if (debouncedVideoUrl.includes("loom.com/share") || debouncedVideoUrl.includes("loom.com/v/")) {
+            const fetchLoom = async () => {
+                try {
+                    const oembedUrl = `https://www.loom.com/v1/oembed?url=${debouncedVideoUrl}`
+                    const res = await fetch(oembedUrl)
+                    const data = await res.json()
+                    if (data.thumbnail_url) {
+                        setPreviewUrl(data.thumbnail_url)
+                        setPreviewType("image")
+                        setValue("video_type", "loom")
+                    }
+                } catch (err) {
+                    console.warn("Loom oembed failed", err)
+                }
+            }
+            fetchLoom()
+            return
+        }
+
+        // 3. Fallback (Invalid or Unknown)
+        // Only toast if it looks like they tried to paste a link (length > 5) and clearly failed match
+        if (debouncedVideoUrl.length > 5 && videoType !== 'upload') {
+            toast.error("Only YouTube and Loom links are supported.")
+        }
+    }, [debouncedVideoUrl, videoType, isUploading, setValue])
 
     // --- File Upload Handling ---
     // --- File Upload Handling ---
@@ -105,51 +152,7 @@ export function VideoBubbleInput() {
         if (file) processFile(file)
     }
 
-    // --- Embed Link Handling ---
-    const [linkInput, setLinkInput] = useState("")
-    const [debouncedLink] = useDebounce(linkInput, 500)
 
-    const setPreviewThumbnail = useCallback(async (url: string) => {
-        // 1. YouTube
-        const youtubeMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)
-        if (youtubeMatch) {
-            const id = youtubeMatch[1]
-            const thumb = `https://img.youtube.com/vi/${id}/0.jpg`
-            setPreviewUrl(thumb)
-            setPreviewType("image")
-            setValue("video_url", url)
-            setValue("video_type", "youtube")
-            return
-        }
-
-        // 2. Loom
-        if (url.includes("loom.com/share") || url.includes("loom.com/v/")) {
-            try {
-                const oembedUrl = `https://www.loom.com/v1/oembed?url=${url}`
-                const res = await fetch(oembedUrl)
-                const data = await res.json()
-                if (data.thumbnail_url) {
-                    setPreviewUrl(data.thumbnail_url)
-                    setPreviewType("image")
-                    setValue("video_url", url)
-                    setValue("video_type", "loom")
-                    return
-                }
-            } catch (err) {
-                console.warn("Loom oembed failed", err)
-            }
-        }
-
-        // 3. Fallback (Invalid or Unknown)
-        if (url.length > 5) {
-            toast.error("Only YouTube and Loom links are supported.")
-        }
-    }, [setValue])
-
-    useEffect(() => {
-        if (!debouncedLink) return
-        setPreviewThumbnail(debouncedLink)
-    }, [debouncedLink, setPreviewThumbnail])
 
 
     // --- Render Logic ---
@@ -159,8 +162,8 @@ export function VideoBubbleInput() {
         <div className="flex flex-col items-center w-full mx-auto sm:my-4">
 
             {/* Hidden Inputs for Form Data */}
-            <input type="hidden" {...register("video_url")} />
             <input type="hidden" {...register("video_type")} />
+
 
             {/* 1. The Bubble (Display & Upload Zone) */}
             <div
@@ -211,7 +214,6 @@ export function VideoBubbleInput() {
 
                                 setPreviewUrl(null)
                                 setPreviewType(null)
-                                setLinkInput("")
                                 setValue("video_url", "", { shouldDirty: true })
                                 setValue("video_type", null)
                             }}
@@ -249,7 +251,7 @@ export function VideoBubbleInput() {
             </div>
 
             {/* 2. Link Input (Below Bubble) */}
-            <div className="mt-4 w-full max-w-60 relative">
+            <div className={`mt-4 w-full max-w-60 relative ${videoType === 'upload' ? 'hidden' : ''}`}>
                 <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <LinkIcon className="h-3.5 w-3.5 text-neutral-400" />
@@ -257,9 +259,8 @@ export function VideoBubbleInput() {
                     <input
                         type="text"
                         placeholder="Link (YouTube / Loom)"
-                        value={linkInput}
-                        onChange={(e) => setLinkInput(e.target.value)}
-                        disabled={isUploading}
+                        {...register("video_url")}
+                        disabled={isUploading || videoType === 'upload'}
                         className="block w-full pl-9 pr-3 py-2.5 border border-neutral-300 rounded-2xl text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-400 focus:bg-white focus:shadow-sm bg-neutral-50/50 hover:border-neutral-400 transition-all font-mono"
                     />
                 </div>
