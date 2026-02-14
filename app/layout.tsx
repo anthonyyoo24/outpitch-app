@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "Create stunning pitch cards.",
 };
 
-import { Toaster } from "@/components/ui/Sonner";
+import { Toaster } from "@/components/ui/Toaster";
 import { AuthListener } from "@/components/features/auth/AuthListener";
 
 export default function RootLayout({
