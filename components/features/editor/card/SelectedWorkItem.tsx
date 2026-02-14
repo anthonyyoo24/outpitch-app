@@ -52,8 +52,8 @@ export function SelectedWorkItem({ index, remove }: SelectedWorkItemProps) {
         if (!currentImageUrl) return
 
         try {
-            if (currentImageUrl.includes("/storage/v1/object/public/pitch-media/")) {
-                const oldPath = currentImageUrl.split("pitch-media/")[1]
+            if (currentImageUrl.includes("/storage/v1/object/public/pitch-assets/")) {
+                const oldPath = currentImageUrl.split("pitch-assets/")[1]
                 if (oldPath) {
                     await deletePitchImage(oldPath)
                 }

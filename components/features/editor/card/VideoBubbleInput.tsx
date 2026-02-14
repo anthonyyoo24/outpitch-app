@@ -123,8 +123,9 @@ export function VideoBubbleInput() {
             const currentVideoUrl = getValues("video_url")
 
             // Check if it's a Supabase Storage URL
-            if (currentVideoUrl && currentVideoUrl.includes("/storage/v1/object/public/pitch-media/")) {
-                const oldPath = currentVideoUrl.split("pitch-media/")[1]
+            // Check if it's a Supabase Storage URL
+            if (currentVideoUrl && currentVideoUrl.includes("/storage/v1/object/public/pitch-videos/")) {
+                const oldPath = currentVideoUrl.split("pitch-videos/")[1]
                 if (oldPath) {
                     await deletePitchVideo(oldPath) // Delete old file
                 }
@@ -218,8 +219,8 @@ export function VideoBubbleInput() {
                                 e.stopPropagation()
                                 try {
                                     const currentVideoUrl = getValues("video_url")
-                                    if (currentVideoUrl && currentVideoUrl.includes("/storage/v1/object/public/pitch-media/")) {
-                                        const oldPath = currentVideoUrl.split("pitch-media/")[1]
+                                    if (currentVideoUrl && currentVideoUrl.includes("/storage/v1/object/public/pitch-videos/")) {
+                                        const oldPath = currentVideoUrl.split("pitch-videos/")[1]
                                         if (oldPath) {
                                             await deletePitchVideo(oldPath)
                                             toast.success("Video removed")
