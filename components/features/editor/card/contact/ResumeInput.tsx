@@ -10,6 +10,7 @@ import { useUserStore } from "@/lib/store/user-store"
 export function ResumeInput() {
     const { register, setValue, watch, getValues } = useFormContext()
     const [isUploading, setIsUploading] = useState(false)
+    const [isDragging, setIsDragging] = useState(false)
     const user = useUserStore((state) => state.user)
     const userId = user?.id
 
@@ -36,8 +37,7 @@ export function ResumeInput() {
         }
     }
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
+    const processFile = async (file: File) => {
         if (!file) return
 
         if (!userId) {
@@ -48,6 +48,17 @@ export function ResumeInput() {
         // Size check (also done in upload.ts, but good for quick feedback)
         if (file.size > 10 * 1024 * 1024) {
             toast.error("File too large. Max 10MB.")
+            return
+        }
+
+        // Type check
+        const allowedTypes = [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ]
+        if (!allowedTypes.includes(file.type)) {
+            toast.error("Invalid file type. Only PDF, DOC, and DOCX are allowed.")
             return
         }
 
@@ -69,6 +80,30 @@ export function ResumeInput() {
         } finally {
             setIsUploading(false)
         }
+    }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) processFile(file)
+    }
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault()
+        if (!isUploading) setIsDragging(true)
+    }
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault()
+        setIsDragging(false)
+    }
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault()
+        setIsDragging(false)
+        if (isUploading) return
+
+        const file = e.dataTransfer.files?.[0]
+        if (file) processFile(file)
     }
 
     const handleRemove = async (e: React.MouseEvent) => {
@@ -126,10 +161,17 @@ export function ResumeInput() {
                 </div>
             ) : (
                 // Upload State
-                <label className={`group relative block w-full ${isUploading ? 'cursor-not-allowed opacity-70' : ''}`}>
-                    <div className={`flex items-center justify-between p-3 rounded-2xl border border-dashed transition-all ${isUploading
-                        ? 'border-indigo-300 bg-indigo-50/30'
-                        : 'border-neutral-300 bg-neutral-50/50 hover:border-neutral-400 hover:bg-neutral-50 cursor-pointer'
+                <label
+                    className={`group relative block w-full ${isUploading ? 'cursor-not-allowed opacity-70' : ''}`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                >
+                    <div className={`flex items-center justify-between p-3 rounded-2xl border border-dashed transition-all ${isDragging
+                        ? 'border-indigo-500 bg-indigo-50 shadow-md ring-1 ring-indigo-500 scale-[1.01]'
+                        : isUploading
+                            ? 'border-indigo-300 bg-indigo-50/30'
+                            : 'border-neutral-300 bg-neutral-50/50 hover:border-neutral-400 hover:bg-neutral-50 cursor-pointer'
                         }`}>
                         <div className="flex items-center gap-3">
                             <div className={`flex items-center justify-center w-10 h-10 rounded-xl border transition-colors shadow-sm ${isUploading
@@ -139,15 +181,15 @@ export function ResumeInput() {
                                 {isUploading ? (
                                     <Loader2 className="w-5 h-5 text-indigo-600 animate-spin" />
                                 ) : (
-                                    <Upload className="w-5 h-5 text-neutral-500 group-hover:text-neutral-700" />
+                                    <Upload className={`w-5 h-5 transition-colors ${isDragging ? 'text-indigo-600' : 'text-neutral-500 group-hover:text-neutral-700'}`} />
                                 )}
                             </div>
                             <div className="flex flex-col">
-                                <span className={`text-xs font-medium font-mono transition-colors ${isUploading
+                                <span className={`text-xs font-medium font-mono transition-colors ${isUploading || isDragging
                                     ? 'text-indigo-600'
                                     : 'text-neutral-500 group-hover:text-neutral-900'
                                     }`}>
-                                    {isUploading ? "Uploading..." : "Upload Resume"}
+                                    {isUploading ? "Uploading..." : isDragging ? "Drop to upload" : "Upload Resume"}
                                 </span>
                                 <span className="text-[10px] text-neutral-400 font-mono">
                                     {isUploading ? "Please wait" : "PDF, DOCX (Max 10MB)"}
@@ -155,7 +197,10 @@ export function ResumeInput() {
                             </div>
                         </div>
                         {!isUploading && (
-                            <div className="px-3 py-1.5 rounded-lg bg-white border border-neutral-200 text-[10px] text-neutral-500 font-medium font-mono group-hover:text-neutral-700 group-hover:border-neutral-300 transition-colors shadow-sm">
+                            <div className={`px-3 py-1.5 rounded-lg border text-[10px] font-medium font-mono transition-colors shadow-sm ${isDragging
+                                ? 'bg-indigo-100 border-indigo-200 text-indigo-700'
+                                : 'bg-white border-neutral-200 text-neutral-500 group-hover:text-neutral-700 group-hover:border-neutral-300'
+                                }`}>
                                 Select File
                             </div>
                         )}
