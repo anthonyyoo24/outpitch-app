@@ -8,6 +8,7 @@ export const pitchSchema = z.object({
     role_title: z.string().min(1, "Role title is required"),
     header_content: z.string(), // HTML string for the rich text header
     video_url: z.string(),
+    video_type: z.enum(["upload", "youtube", "loom"]).nullable().optional(),
     bio: z.string().optional(),
     portfolio: z.array(
         z.object({

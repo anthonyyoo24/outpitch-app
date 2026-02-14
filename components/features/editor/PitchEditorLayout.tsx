@@ -1,7 +1,8 @@
+"use client"
 
-
-import React from "react"
+import React, { useState } from "react"
 import { PitchEditCard } from "./card/PitchEditCard"
+import { PitchPreviewCard } from "./card/PitchPreviewCard"
 import { PitchEditorToolbar } from "./PitchEditorToolbar"
 import { PitchFormProvider } from "./PitchFormProvider"
 
@@ -19,18 +20,25 @@ export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutPro
 
     // Data guaranteed by page component (Strict Fetching)
 
+    // Initialize preview mode based on status
+    const [isPreviewMode, setIsPreviewMode] = useState(initialData.status === "published")
+
     return (
-        <PitchFormProvider defaultValues={initialData} pitchId={pitchId}>
+        <PitchFormProvider key={initialData.status} defaultValues={initialData} pitchId={pitchId}>
             <div className="flex-1 relative h-full overflow-hidden" data-pitch-id={pitchId}>
                 {/* Technical Grid Background handled in dashboard layout, but good to reinforce or keep empty if handled above */}
                 {/* Assuming GridBackground is in DashboardLayout as seen in previous view_file */}
 
-                <PitchEditorToolbar pitchId={pitchId} />
+                <PitchEditorToolbar
+                    pitchId={pitchId}
+                    isPreviewMode={isPreviewMode}
+                    onTogglePreview={setIsPreviewMode}
+                />
 
                 {/* Scrollable Container */}
                 <div className="w-full h-full sm:pt-16 overflow-y-auto custom-scrollbar relative z-0">
                     <div className="w-full min-h-full flex items-center justify-center p-4 sm:p-8">
-                        <PitchEditCard />
+                        {isPreviewMode ? <PitchPreviewCard /> : <PitchEditCard />}
                     </div>
                 </div>
             </div>

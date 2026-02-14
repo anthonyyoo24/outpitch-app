@@ -29,6 +29,10 @@ export function VideoBubbleInput() {
     useEffect(() => {
         if (isUploading) return
 
+        // Guard: If the user cleared the input (videoUrl is empty), but debounce hasn't caught up yet,
+        // we should exit early to avoid "restoring" state based on the stale debounced URL.
+        if (!videoUrl && debouncedVideoUrl) return
+
         if (!debouncedVideoUrl) {
             setPreviewUrl(null)
             setPreviewType(null)
@@ -42,10 +46,17 @@ export function VideoBubbleInput() {
         }
 
         // If it's an upload, the URL is the source
-        if (videoType === 'upload') {
+        const isSupabaseUpload = debouncedVideoUrl.includes("/storage/v1/object/public/pitch-videos/")
+
+        if (videoType === 'upload' || isSupabaseUpload) {
             setPreviewUrl(debouncedVideoUrl)
             setPreviewType('video')
             clearErrors("video_url")
+
+            // Ensure type is synced if we detected via URL
+            if (videoType !== 'upload') {
+                setValue("video_type", "upload")
+            }
             return
         }
 
@@ -96,7 +107,7 @@ export function VideoBubbleInput() {
             // If it's just short typing, clear error to avoid noise
             clearErrors("video_url")
         }
-    }, [debouncedVideoUrl, videoType, isUploading, setValue, setError, clearErrors])
+    }, [debouncedVideoUrl, videoType, isUploading, setValue, setError, clearErrors, videoUrl])
 
     // --- File Upload Handling ---
     // --- File Upload Handling ---
