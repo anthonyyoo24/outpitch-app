@@ -6,12 +6,13 @@ import { useFormContext } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 import { toast } from "sonner"
 import { Upload, Link as LinkIcon, X, Loader2 } from "lucide-react"
+import { ValidationTooltip } from "./validation/ValidationTooltip"
 
 import { uploadPitchVideo, deletePitchVideo } from "@/lib/storage/upload"
 import { useUserStore } from "@/lib/store/user-store"
 
 export function VideoBubbleInput() {
-    const { register, setValue, watch, getValues } = useFormContext()
+    const { register, setValue, watch, getValues, setError, clearErrors, formState: { errors } } = useFormContext()
     const [isUploading, setIsUploading] = useState(false)
     const [isDragging, setIsDragging] = useState(false)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -31,6 +32,9 @@ export function VideoBubbleInput() {
         if (!debouncedVideoUrl) {
             setPreviewUrl(null)
             setPreviewType(null)
+            // Clear any manual errors when input is cleared
+            clearErrors("video_url")
+
             if (videoType && videoType !== 'upload') {
                 setValue("video_type", null)
             }
@@ -41,6 +45,7 @@ export function VideoBubbleInput() {
         if (videoType === 'upload') {
             setPreviewUrl(debouncedVideoUrl)
             setPreviewType('video')
+            clearErrors("video_url")
             return
         }
 
@@ -52,6 +57,7 @@ export function VideoBubbleInput() {
             setPreviewUrl(thumb)
             setPreviewType("image")
             setValue("video_type", "youtube")
+            clearErrors("video_url")
             return
         }
 
@@ -66,6 +72,7 @@ export function VideoBubbleInput() {
                         setPreviewUrl(data.thumbnail_url)
                         setPreviewType("image")
                         setValue("video_type", "loom")
+                        clearErrors("video_url")
                     }
                 } catch (err) {
                     console.warn("Loom oembed failed", err)
@@ -76,11 +83,20 @@ export function VideoBubbleInput() {
         }
 
         // 3. Fallback (Invalid or Unknown)
-        // Only toast if it looks like they tried to paste a link (length > 5) and clearly failed match
+        // If it looks like they tried to paste a link (length > 5) and clearly failed match
         if (debouncedVideoUrl.length > 5 && videoType !== 'upload') {
-            toast.error("Only YouTube and Loom links are supported.")
+            setError("video_url", {
+                type: "manual",
+                message: "Only YouTube and Loom links are supported."
+            })
+            // Reset preview if invalid
+            setPreviewUrl(null)
+            setPreviewType(null)
+        } else {
+            // If it's just short typing, clear error to avoid noise
+            clearErrors("video_url")
         }
-    }, [debouncedVideoUrl, videoType, isUploading, setValue])
+    }, [debouncedVideoUrl, videoType, isUploading, setValue, setError, clearErrors])
 
     // --- File Upload Handling ---
     // --- File Upload Handling ---
@@ -157,6 +173,7 @@ export function VideoBubbleInput() {
 
     // --- Render Logic ---
     const hasContent = !!previewUrl
+    const error = errors.video_url?.message as string | undefined
 
     return (
         <div className="flex flex-col items-center w-full mx-auto sm:my-4">
@@ -252,16 +269,18 @@ export function VideoBubbleInput() {
 
             {/* 2. Link Input (Below Bubble) */}
             <div className={`mt-4 w-full max-w-60 relative ${videoType === 'upload' ? 'hidden' : ''}`}>
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <LinkIcon className="h-3.5 w-3.5 text-neutral-400" />
-                    </div>
+                <div className={`group relative flex items-center gap-3 p-1.5 pl-3 rounded-2xl border bg-neutral-50/50 transition-colors focus-within:bg-white focus-within:shadow-sm ${error
+                    ? "border-red-500 focus-within:border-red-500"
+                    : "border-neutral-300 hover:border-neutral-400 focus-within:border-neutral-400"
+                    }`}>
+                    <ValidationTooltip error={error} />
+                    <LinkIcon className={`w-3.5 h-3.5 ${error ? "text-red-500" : "text-neutral-400"}`} />
                     <input
                         type="text"
                         placeholder="Link (YouTube / Loom)"
                         {...register("video_url")}
                         disabled={isUploading || videoType === 'upload'}
-                        className="block w-full pl-9 pr-3 py-2.5 border border-neutral-300 rounded-2xl text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-400 focus:bg-white focus:shadow-sm bg-neutral-50/50 hover:border-neutral-400 transition-all font-mono"
+                        className="flex-1 bg-transparent border-none text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none py-1 font-mono transition-[background-color] duration-[9999s] ease-in-out"
                     />
                 </div>
             </div>
