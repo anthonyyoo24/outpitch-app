@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive relative active:scale-95",
   {
     variants: {
       variant: {
@@ -43,23 +43,56 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
-  type,
+  isLoading = false,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    isLoading?: boolean
   }) {
   const Comp = asChild ? Slot : "button"
 
+  if (asChild) {
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        disabled={props.disabled || isLoading}
+        {...props}
+      >
+        {children}
+      </Comp>
+    )
+  }
+
   return (
-    <Comp
-      data-slot="button"
-      data-variant={variant}
-      data-size={size}
-      type={asChild ? undefined : type ?? "button"}
+    <button
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={props.disabled || isLoading}
       {...props}
-    />
+    >
+      {isLoading &&
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4 animate-spin"
+          >
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+        </div>
+      }
+      <span className={isLoading ? "opacity-0" : "opacity-100"}>
+        {children}
+      </span>
+    </button>
   )
 }
 

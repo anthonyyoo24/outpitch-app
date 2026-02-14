@@ -1,30 +1,58 @@
 "use client"
 
-export function PitchEditorLayout({ pitchId }: { pitchId: string }) {
-    return (
-        <div className="flex h-full w-full items-center justify-center bg-gray-50 p-6">
-            <div className="flex h-full w-full max-w-5xl flex-col rounded-xl border border-neutral-200 bg-white shadow-sm">
-                <div className="flex h-16 shrink-0 items-center justify-between border-b border-neutral-100 px-6">
-                    <div className="flex items-center gap-2">
-                        <h1 className="text-lg font-semibold text-neutral-900">Edit Pitch</h1>
-                        <span className="text-xs text-neutral-400">ID: {pitchId}</span>
-                    </div>
-                    <div className="flex gap-2">
-                        <button type="button" className="rounded-md px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100">
-                            Save Draft
-                        </button>
-                        <button type="button" className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800">
-                            Publish
-                        </button>
-                    </div>
-                </div>
+import React, { useState } from "react"
+import { PitchEditCard } from "./card/PitchEditCard"
+import { PitchPreviewCard } from "./card/PitchPreviewCard"
+import { PitchEditorToolbar } from "./PitchEditorToolbar"
+import { PitchFormProvider } from "./PitchFormProvider"
 
-                <div className="flex flex-1 items-center justify-center p-10">
-                    <div className="text-center text-neutral-400">
-                        <p>Editor Widgets (Company Input, Video, Tech Stack) will go here.</p>
+
+import { PitchFormValues, ActionStatus } from "./schema"
+
+interface PitchEditorLayoutProps {
+    pitchId: string
+    initialData: PitchFormValues
+}
+
+export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutProps) {
+    // Note: pitchId will be used later for fetching/saving data
+    // Fetch data server-side - Refactored to parent
+
+    // Data guaranteed by page component (Strict Fetching)
+
+    // Initialize preview mode based on status
+    const [isPreviewMode, setIsPreviewMode] = useState(initialData.status === "published")
+    const [actionStatus, setActionStatus] = useState<ActionStatus>("idle")
+
+    // Reset success state after delay
+    React.useEffect(() => {
+        if (actionStatus === "success-published" || actionStatus === "success-unpublished") {
+            const timer = setTimeout(() => setActionStatus("idle"), 2000)
+            return () => clearTimeout(timer)
+        }
+    }, [actionStatus])
+
+    return (
+        <PitchFormProvider key={initialData.status} defaultValues={initialData} pitchId={pitchId}>
+            <div className="flex-1 relative h-full overflow-hidden" data-pitch-id={pitchId}>
+                {/* Technical Grid Background handled in dashboard layout, but good to reinforce or keep empty if handled above */}
+                {/* Assuming GridBackground is in DashboardLayout as seen in previous view_file */}
+
+                <PitchEditorToolbar
+                    pitchId={pitchId}
+                    isPreviewMode={isPreviewMode}
+                    onTogglePreview={setIsPreviewMode}
+                    actionStatus={actionStatus}
+                    onActionStatusChange={setActionStatus}
+                />
+
+                {/* Scrollable Container */}
+                <div className="w-full h-full sm:pt-16 overflow-y-auto custom-scrollbar relative z-0">
+                    <div className="w-full min-h-full flex items-center justify-center p-4 sm:p-8">
+                        {isPreviewMode ? <PitchPreviewCard /> : <PitchEditCard />}
                     </div>
                 </div>
             </div>
-        </div>
+        </PitchFormProvider>
     )
 }

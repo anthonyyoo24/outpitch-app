@@ -18,7 +18,7 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/DropdownMenu"
 import { ConfirmDeleteDialog } from "@/components/ui/ConfirmDeleteDialog"
 import { deletePitchAction } from "@/app/dashboard/actions"
 
