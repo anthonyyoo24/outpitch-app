@@ -8,6 +8,7 @@ import { TextStyle } from "@tiptap/extension-text-style"
 import { useFormContext } from "react-hook-form"
 import { Type, Bold, Italic, Underline as UnderlineIcon } from "lucide-react"
 import { Extension } from "@tiptap/core"
+import Placeholder from "@tiptap/extension-placeholder"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -63,11 +64,14 @@ export function PitchHeaderInput() {
             Underline,
             TextStyle,
             FontSize,
+            Placeholder.configure({
+                placeholder: "Hey Linear, I'm Alex Rivera",
+            }),
         ],
-        content: headerContent || `<p class="text-3xl sm:text-[40px] text-neutral-400 font-mono">Hey Linear, I'm <span class="text-neutral-900 font-medium">Alex Rivera.</span></p>`,
+        content: headerContent || "",
         editorProps: {
             attributes: {
-                class: "outline-none sm:text-[40px] leading-[1.15] text-neutral-600 transition-colors text-3xl font-normal text-neutral-400 tracking-tight font-mono duration-100 ease-in-out",
+                class: "outline-none sm:text-[40px] leading-[1.15] text-neutral-600 transition-colors text-3xl font-normal text-neutral-400 tracking-tight font-mono duration-100 ease-in-out min-h-24",
             },
         },
         onUpdate: ({ editor }) => {
