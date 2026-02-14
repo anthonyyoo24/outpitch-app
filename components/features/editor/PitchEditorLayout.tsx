@@ -7,7 +7,7 @@ import { PitchEditorToolbar } from "./PitchEditorToolbar"
 import { PitchFormProvider } from "./PitchFormProvider"
 
 
-import { PitchFormValues } from "./schema"
+import { PitchFormValues, ActionStatus } from "./schema"
 
 interface PitchEditorLayoutProps {
     pitchId: string
@@ -22,6 +22,15 @@ export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutPro
 
     // Initialize preview mode based on status
     const [isPreviewMode, setIsPreviewMode] = useState(initialData.status === "published")
+    const [actionStatus, setActionStatus] = useState<ActionStatus>("idle")
+
+    // Reset success state after delay
+    React.useEffect(() => {
+        if (actionStatus === "success-published" || actionStatus === "success-unpublished") {
+            const timer = setTimeout(() => setActionStatus("idle"), 2000)
+            return () => clearTimeout(timer)
+        }
+    }, [actionStatus])
 
     return (
         <PitchFormProvider key={initialData.status} defaultValues={initialData} pitchId={pitchId}>
@@ -33,6 +42,8 @@ export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutPro
                     pitchId={pitchId}
                     isPreviewMode={isPreviewMode}
                     onTogglePreview={setIsPreviewMode}
+                    actionStatus={actionStatus}
+                    onActionStatusChange={setActionStatus}
                 />
 
                 {/* Scrollable Container */}
