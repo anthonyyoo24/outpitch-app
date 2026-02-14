@@ -47,9 +47,13 @@ const FontSize = Extension.create({
 });
 
 export function PitchHeaderInput() {
-    const { setValue, watch } = useFormContext()
+    const { setValue, watch, register } = useFormContext()
     const headerContent = watch("header_content")
     const [currentFontSize, setCurrentFontSize] = React.useState("40px")
+
+    React.useEffect(() => {
+        register("header_content")
+    }, [register])
 
 
     const editor = useEditor({
