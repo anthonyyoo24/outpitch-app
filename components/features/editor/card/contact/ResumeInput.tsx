@@ -19,10 +19,18 @@ export function ResumeInput() {
     const getFileName = (url: string) => {
         if (!url) return ""
         try {
-            // If it's our storage URL, try to get the original name or just the ID name
-            // Our storage path: userId/resumes/nanoid.ext
+            // URL format: .../userId/resumes/nanoid-original_filename.ext
             const parts = url.split("/")
-            return parts[parts.length - 1] // Returns nanoid.ext
+            const fileName = parts[parts.length - 1]
+
+            // If it matches our new pattern (nanoid(21) + "-" + rest), strip the prefix
+            // nanoid is 21 chars by default. Check if we have at least 22 chars and a hyphen at 21?
+            // Actually, nanoid uses - and _ so splitting is hard. 
+            // We'll trust the length since we just set it up. 21 + 1 = 22 chars prefix.
+            if (fileName.length > 22) {
+                return fileName.slice(22)
+            }
+            return fileName
         } catch {
             return "Resume"
         }
@@ -108,7 +116,7 @@ export function ResumeInput() {
                     <button
                         type="button"
                         onClick={handleRemove}
-                        className="p-2 ml-2 rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                        className="p-2 ml-2 cursor-pointer rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 transition-colors"
                         title="Remove resume"
                     >
                         <X className="w-4 h-4" />
@@ -118,10 +126,16 @@ export function ResumeInput() {
                 </div>
             ) : (
                 // Upload State
-                <label className={`group relative block w-full ${isUploading ? 'pointer-events-none opacity-80' : ''}`}>
-                    <div className="flex items-center justify-between p-3 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50/50 hover:border-neutral-400 hover:bg-neutral-50 transition-all cursor-pointer">
+                <label className={`group relative block w-full ${isUploading ? 'cursor-not-allowed opacity-70' : ''}`}>
+                    <div className={`flex items-center justify-between p-3 rounded-2xl border border-dashed transition-all ${isUploading
+                        ? 'border-indigo-300 bg-indigo-50/30'
+                        : 'border-neutral-300 bg-neutral-50/50 hover:border-neutral-400 hover:bg-neutral-50 cursor-pointer'
+                        }`}>
                         <div className="flex items-center gap-3">
-                            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-neutral-200 group-hover:border-neutral-300 transition-colors shadow-sm">
+                            <div className={`flex items-center justify-center w-10 h-10 rounded-xl border transition-colors shadow-sm ${isUploading
+                                ? 'bg-indigo-50 border-indigo-100'
+                                : 'bg-white border-neutral-200 group-hover:border-neutral-300'
+                                }`}>
                                 {isUploading ? (
                                     <Loader2 className="w-5 h-5 text-indigo-600 animate-spin" />
                                 ) : (
@@ -129,11 +143,14 @@ export function ResumeInput() {
                                 )}
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-xs font-medium text-neutral-500 group-hover:text-neutral-900 font-mono transition-colors">
+                                <span className={`text-xs font-medium font-mono transition-colors ${isUploading
+                                    ? 'text-indigo-600'
+                                    : 'text-neutral-500 group-hover:text-neutral-900'
+                                    }`}>
                                     {isUploading ? "Uploading..." : "Upload Resume"}
                                 </span>
                                 <span className="text-[10px] text-neutral-400 font-mono">
-                                    PDF, DOCX (Max 10MB)
+                                    {isUploading ? "Please wait" : "PDF, DOCX (Max 10MB)"}
                                 </span>
                             </div>
                         </div>

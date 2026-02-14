@@ -136,8 +136,10 @@ export async function uploadPitchResume(file: File, userId: string) {
         throw new Error("Invalid file type. Only PDF, DOC, and DOCX are allowed.")
     }
 
-    const fileExt = file.name.split(".").pop()
-    const fileName = `${nanoid()}.${fileExt}`
+    // Sanitize filename: remove special chars, keep alphanumeric, dots, dashes, underscores
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+    // Prefix with nanoid (21 chars) for uniqueness, followed by hyphen
+    const fileName = `${nanoid()}-${safeName}`
     const filePath = `${userId}/resumes/${fileName}`
 
     const { error } = await supabase.storage
