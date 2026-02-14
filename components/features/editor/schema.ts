@@ -42,4 +42,22 @@ export const pitchSchema = z.object({
     status: z.enum(["draft", "published"]).default("draft"),
 })
 
+
+// Strict schema for publishing
+export const publishSchema = pitchSchema.extend({
+    company_name: z.string().min(1, "Company name is required"),
+    role_title: z.string().min(1, "Role title is required"),
+    header_content: z.string().min(1, "Pitch text is required").refine(val => {
+        const stripped = val.replace(/<[^>]*>/g, '').trim()
+        return stripped.length > 0
+    }, "Pitch text cannot be empty"),
+    video_url: z.string().min(1, "Video is required"),
+    bio: z.string().min(1, "Bio is required"),
+    contact: z.object({
+        email: z.string().email("Email is required for publishing"),
+        calendly_link: z.union([z.url("Please enter a valid URL"), z.literal("")]).optional(),
+    })
+})
+
 export type PitchFormValues = z.infer<typeof pitchSchema>
+

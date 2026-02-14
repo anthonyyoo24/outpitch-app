@@ -1,7 +1,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
-import { PitchFormValues, pitchSchema } from "@/components/features/editor/schema"
+import { PitchFormValues, pitchSchema, publishSchema } from "@/components/features/editor/schema"
 
 export async function getPitch(pitchId: string) {
     const validation = pitchSchema.shape.id.safeParse(pitchId)
@@ -93,11 +93,43 @@ export async function updatePitch(pitchId: string, values: PitchFormValues) {
     return { success: true }
 }
 
+
 export async function publishPitch(pitchId: string) {
     const supabase = await createClient()
 
-    // TODO: Add strict validation here before publishing.
-    // Ensure email and header_content (and other mandatory fields) are present and valid.
+    // 1. Fetch current data to validate
+    const { data: currentPitch, error: fetchError } = await supabase
+        .from("pitches")
+        .select("*")
+        .eq("id", pitchId)
+        .single()
+
+    if (fetchError || !currentPitch) {
+        throw new Error("Pitch not found")
+    }
+
+    // 2. Construct object for validation (similar to getPitch mapping)
+    const pitchData = {
+        ...currentPitch,
+        contact: {
+            email: currentPitch.email || "",
+            calendly_link: currentPitch.calendly_link || "",
+        },
+        // Ensure arrays are present
+        tech_stack: currentPitch.tech_stack || [],
+        work_experience: currentPitch.work_experience ?? [],
+        portfolio: currentPitch.portfolio || [],
+        social_links: currentPitch.social_links ?? []
+    }
+
+    // 3. Strict Validation
+    const validation = publishSchema.safeParse(pitchData)
+
+    if (!validation.success) {
+        // Collect errors deeply if needed, but for server action just one message is fine
+        const errorMessage = validation.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(', ')
+        throw new Error(`Cannot publish: ${errorMessage}`)
+    }
 
     const { error } = await supabase
         .from("pitches")

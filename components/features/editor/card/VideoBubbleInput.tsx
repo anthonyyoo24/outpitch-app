@@ -186,7 +186,7 @@ export function VideoBubbleInput() {
             {/* 1. The Bubble (Display & Upload Zone) */}
             <div
                 className={`relative shrink-0 w-24 h-24 sm:w-36 sm:h-36 rounded-full shadow-xl border overflow-hidden bg-neutral-50 ring-1 group transition-all duration-300
-                    ${isDragging ? 'border-indigo-500 ring-2 ring-indigo-500 scale-105' : 'border-neutral-100 ring-neutral-200'}
+                    ${error ? 'border-red-500 ring-red-500' : isDragging ? 'border-indigo-500 ring-2 ring-indigo-500 scale-105' : 'border-neutral-100 ring-neutral-200'}
                     ${hasContent && !isDragging ? 'rotate-0' : 'sm:rotate-2 hover:rotate-0'}`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}

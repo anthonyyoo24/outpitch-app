@@ -47,9 +47,10 @@ const FontSize = Extension.create({
 });
 
 export function PitchHeaderInput() {
-    const { setValue, watch, register } = useFormContext()
+    const { setValue, watch, register, formState: { errors } } = useFormContext()
     const headerContent = watch("header_content")
     const [currentFontSize, setCurrentFontSize] = React.useState("40px")
+    const error = errors.header_content?.message as string | undefined
 
     React.useEffect(() => {
         register("header_content")
@@ -70,7 +71,7 @@ export function PitchHeaderInput() {
             },
         },
         onUpdate: ({ editor }) => {
-            setValue("header_content", editor.getHTML(), { shouldDirty: true })
+            setValue("header_content", editor.getHTML(), { shouldDirty: true, shouldValidate: true })
         },
         immediatelyRender: false,
     })
@@ -96,7 +97,10 @@ export function PitchHeaderInput() {
     return (
         <div className="flex flex-col pt-2 sm:pt-4 gap-6" >
             <div className="w-full z-10">
-                <div className="flex flex-col transition-colors hover:border-neutral-400 focus-within:border-neutral-400 focus-within:bg-white focus-within:shadow-sm group bg-neutral-50/50 border-neutral-300 border rounded-2xl sm:rounded-3xl p-4 sm:p-5 gap-3">
+                <div className={`flex flex-col transition-colors focus-within:bg-white focus-within:shadow-sm group bg-neutral-50/50 border rounded-2xl sm:rounded-3xl p-4 sm:p-5 gap-3 ${error
+                    ? "border-red-500 hover:border-red-500 focus-within:border-red-500"
+                    : "border-neutral-300 hover:border-neutral-400 focus-within:border-neutral-400"
+                    }`}>
                     {/* Toolbar */}
                     <div className="flex items-center gap-3 border-b border-neutral-200 pb-3 overflow-x-auto no-scrollbar">
                         <DropdownMenu>
