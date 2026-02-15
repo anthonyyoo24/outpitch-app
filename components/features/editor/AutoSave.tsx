@@ -50,6 +50,11 @@ export function AutoSave({ pitchId, defaultValues }: AutoSaveProps) {
             subscription.unsubscribe()
             if (timerRef.current) {
                 clearTimeout(timerRef.current)
+                // Flush pending save on unmount
+                const currentValues = watch()
+                if (currentValues) {
+                    save(currentValues as PitchFormValues)
+                }
             }
         }
     }, [watch, save])
