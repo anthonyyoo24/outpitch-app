@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { PitchEditCard } from "./card/PitchEditCard"
-import { PitchPreviewCard } from "./card/PitchPreviewCard"
+import { PitchPreviewCard } from "../preview/PitchPreviewCard"
 import { PitchEditorToolbar } from "./PitchEditorToolbar"
 import { PitchFormProvider } from "./PitchFormProvider"
 
