@@ -58,6 +58,25 @@ export async function getPitch(pitchId: string) {
 }
 
 export async function updatePitch(pitchId: string, values: PitchFormValues) {
+    // 1. Validate pitchId
+    const idValidation = pitchSchema.shape.id.safeParse(pitchId)
+    if (!idValidation.success) {
+        throw new Error("Invalid pitch ID")
+    }
+
+    // 2. Validate and Parse input values
+    const validation = pitchSchema.safeParse(values)
+
+    if (!validation.success) {
+        // Log the error for debugging purposes (optional)
+        console.error("Validation error:", validation.error)
+        // Return a user-friendly error message
+        const errorMessage = validation.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(', ')
+        throw new Error(`Invalid pitch data: ${errorMessage}`)
+    }
+
+    const parsedValues = validation.data
+
     const supabase = await createClient()
 
     // Check if user owns the pitch (RLS should handle this, but good to be safe/explicit if needed)
@@ -66,26 +85,27 @@ export async function updatePitch(pitchId: string, values: PitchFormValues) {
     const { error } = await supabase
         .from("pitches")
         .update({
-            company_name: values.company_name,
-            role_title: values.role_title,
-            bio: values.bio,
-            video_url: values.video_url,
-            video_type: values.video_type,
-            resume_url: values.resume_url,
+            // Use parsedValues to ensure we use exactly what was validated
+            company_name: parsedValues.company_name,
+            role_title: parsedValues.role_title,
+            bio: parsedValues.bio,
+            video_url: parsedValues.video_url,
+            video_type: parsedValues.video_type,
+            resume_url: parsedValues.resume_url,
 
             // Map Contact object back to DB fields
-            calendly_link: values.contact.calendly_link,
-            email: values.contact.email, // New Column
+            calendly_link: parsedValues.contact.calendly_link,
+            email: parsedValues.contact.email, // New Column
 
-            header_content: values.header_content, // Requires column to exist
-            tech_stack: values.tech_stack,
-            work_experience: values.work_experience,
-            portfolio: values.portfolio,
+            header_content: parsedValues.header_content, // Requires column to exist
+            tech_stack: parsedValues.tech_stack,
+            work_experience: parsedValues.work_experience,
+            portfolio: parsedValues.portfolio,
 
             // Save remaining socials to JSON
             // We can cleanup 'email' from JSON if we want, or overwrite it to keep in sync.
             // Let's just save the new socials structure.
-            social_links: values.social_links,
+            social_links: parsedValues.social_links,
 
             updated_at: new Date().toISOString()
         })
