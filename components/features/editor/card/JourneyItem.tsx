@@ -22,13 +22,21 @@ const MONTHS = [
 const YEARS = Array.from({ length: 30 }, (_, i) => (new Date().getFullYear() - i).toString())
 
 export function JourneyItem({ index, remove }: JourneyItemProps) {
-    const { register, control } = useFormContext()
+    const { register, control, setValue } = useFormContext()
 
     // Watch is_current specifically for logic
     const isCurrent = useWatch({
         control,
         name: `work_experience.${index}.is_current`,
     })
+
+    // Clear end date when switching to current role
+    React.useEffect(() => {
+        if (isCurrent) {
+            setValue(`work_experience.${index}.end_month`, "")
+            setValue(`work_experience.${index}.end_year`, "")
+        }
+    }, [isCurrent, index, setValue])
 
     return (
         <div className="relative group">
