@@ -50,7 +50,7 @@ export async function deletePitchVideo(path: string) {
 
     if (error) {
         console.error("Failed to delete old video:", error)
-        throw new Error(`Failed to delete old video: ${error.message}`)
+        throw new Error(`Failed to delete old video: ${error.message}`, { cause: error })
     }
 }
 
@@ -109,7 +109,7 @@ export async function deletePitchImage(path: string) {
 
     if (error) {
         console.error("Failed to delete image:", error)
-        throw new Error(`Failed to delete image: ${error.message}`)
+        throw new Error(`Failed to delete image: ${error.message}`, { cause: error })
     }
 }
 
@@ -179,6 +179,6 @@ export async function deletePitchResume(path: string) {
 
     if (error) {
         console.error("Failed to delete resume:", error)
-        throw new Error(`Failed to delete resume: ${error.message}`)
+        throw new Error(`Failed to delete resume: ${error.message}`, { cause: error })
     }
 }
