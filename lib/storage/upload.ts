@@ -10,7 +10,8 @@ import { nanoid } from "nanoid"
  */
 export async function uploadPitchVideo(file: File, userId: string) {
     const supabase = createClient()
-    const fileExt = file.name.split(".").pop()
+    const parts = file.name.split(".")
+    const fileExt = parts.length > 1 ? parts.pop() : "bin"
     const fileName = `${nanoid()}.${fileExt}`
     const filePath = `${userId}/${fileName}`
 
@@ -49,8 +50,7 @@ export async function deletePitchVideo(path: string) {
 
     if (error) {
         console.error("Failed to delete old video:", error)
-        // We don't throw here because the new upload might still succeed, 
-        // and we don't want to block the user flow for a cleanup error.
+        throw new Error(`Failed to delete old video: ${error.message}`)
     }
 }
 
@@ -69,7 +69,8 @@ export async function uploadPitchImage(file: File, userId: string) {
         throw new Error("Image file too large. Max 5MB.")
     }
 
-    const fileExt = file.name.split(".").pop()
+    const parts = file.name.split(".")
+    const fileExt = parts.length > 1 ? parts.pop() : "bin"
     const fileName = `${nanoid()}.${fileExt}`
     const filePath = `${userId}/images/${fileName}`
 
@@ -108,6 +109,7 @@ export async function deletePitchImage(path: string) {
 
     if (error) {
         console.error("Failed to delete image:", error)
+        throw new Error(`Failed to delete image: ${error.message}`)
     }
 }
 
@@ -177,5 +179,6 @@ export async function deletePitchResume(path: string) {
 
     if (error) {
         console.error("Failed to delete resume:", error)
+        throw new Error(`Failed to delete resume: ${error.message}`)
     }
 }
