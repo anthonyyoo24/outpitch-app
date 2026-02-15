@@ -71,7 +71,7 @@ export function PitchHeaderInput() {
         content: headerContent || "",
         editorProps: {
             attributes: {
-                class: "outline-none sm:text-[40px] leading-[1.15] text-neutral-600 transition-colors text-3xl font-normal text-neutral-400 tracking-tight font-mono duration-100 ease-in-out min-h-24",
+                class: "outline-none sm:text-[40px] leading-[1.15] text-neutral-600 transition-colors text-3xl font-normal tracking-tight font-mono duration-100 ease-in-out min-h-24",
             },
         },
         onUpdate: ({ editor }) => {

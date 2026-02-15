@@ -4,8 +4,6 @@ import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 import { Search } from "lucide-react"
 import { cn } from "@/lib/utils"
-// If @/lib/utils doesn't exist, I'll use clsx and tailwind-merge directly or check where cn is.
-// User context showed other ui components, they likely have cn.
 
 const Command = React.forwardRef<
     React.ElementRef<typeof CommandPrimitive>,
