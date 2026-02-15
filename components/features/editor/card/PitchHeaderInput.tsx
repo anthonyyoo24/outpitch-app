@@ -5,8 +5,9 @@ import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Underline from "@tiptap/extension-underline"
 import { TextStyle } from "@tiptap/extension-text-style"
+import { Color } from "@tiptap/extension-color"
 import { useFormContext } from "react-hook-form"
-import { Type, Bold, Italic, Underline as UnderlineIcon } from "lucide-react"
+import { Type, Bold, Italic, Underline as UnderlineIcon, Palette, X } from "lucide-react"
 import { Extension } from "@tiptap/core"
 import Placeholder from "@tiptap/extension-placeholder"
 import {
@@ -14,6 +15,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu"
 
 // Custom extension to allow fontSize in textStyle
@@ -64,6 +66,7 @@ export function PitchHeaderInput() {
             Underline,
             TextStyle,
             FontSize,
+            Color,
             Placeholder.configure({
                 placeholder: "Hey Linear, I'm Alex Rivera",
             }),
@@ -129,6 +132,7 @@ export function PitchHeaderInput() {
                                 ))}
                             </DropdownMenuContent>
                         </DropdownMenu>
+
                         <div className="flex items-center gap-1 shrink-0">
                             <button
                                 type="button"
@@ -155,6 +159,56 @@ export function PitchHeaderInput() {
                                 <UnderlineIcon className="w-3.5 h-3.5" />
                             </button>
                         </div>
+
+                        {/* Vertical Divider */}
+                        <div className="h-4 w-px bg-neutral-200 mx-1 shrink-0" />
+
+                        {/* Text Color Picker */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    className={`flex items-center gap-1.5 cursor-pointer p-1.5 rounded-lg transition-colors focus:outline-none outline-none group/color shrink-0 select-none ${editor.getAttributes('textStyle').color ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-400 hover:text-neutral-900 hover:bg-neutral-200/50'}`}
+                                    type="button"
+                                    title="Text Color"
+                                >
+                                    <Palette className="w-3.5 h-3.5" style={{ color: editor.getAttributes('textStyle').color }} />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-[200px] p-2 bg-white border border-neutral-100 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center justify-between px-2 py-1">
+                                        <span className="text-[10px] uppercase font-bold text-neutral-400 font-mono tracking-wider">Custom Color</span>
+                                    </div>
+                                    <div className="px-2 pb-1">
+                                        <div className="relative flex items-center gap-2">
+                                            <div className="relative w-8 h-8 rounded-full overflow-hidden shadow-sm border border-neutral-200 ring-1 ring-neutral-100 shrink-0 cursor-pointer hover:ring-2 hover:ring-neutral-300 transition-all">
+                                                <input
+                                                    type="color"
+                                                    className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] p-0 m-0 border-0 cursor-pointer"
+                                                    onInput={(e) => editor.chain().focus().setColor((e.target as HTMLInputElement).value).run()}
+                                                    value={editor.getAttributes('textStyle').color || '#000000'}
+                                                />
+                                            </div>
+                                            <span className="text-[10px] font-mono text-neutral-500">Pick a color...</span>
+                                        </div>
+                                    </div>
+
+                                    {(editor.getAttributes('textStyle').color) && (
+                                        <>
+                                            <DropdownMenuSeparator className="bg-neutral-100 my-1" />
+                                            <DropdownMenuItem
+                                                onClick={() => editor.chain().focus().unsetColor().run()}
+                                                className="w-full flex items-center gap-2 px-2 py-1.5 text-[10px] text-red-500 hover:text-red-700 focus:text-red-700 hover:bg-red-50 focus:bg-red-50 rounded-lg transition-colors font-mono cursor-pointer"
+                                            >
+                                                <X className="w-3 h-3" />
+                                                <span>Reset to Default</span>
+                                            </DropdownMenuItem>
+                                        </>
+                                    )}
+                                </div>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                     </div>
 
                     {/* Editor */}
