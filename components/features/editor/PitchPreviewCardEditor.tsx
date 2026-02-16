@@ -9,12 +9,14 @@ export function PitchPreviewCardEditor() {
     const headerContent = watch("header_content")
     const bio = watch("bio")
     const videoUrl = watch("video_url")
+    const portfolio = watch("portfolio")
 
     return (
         <PitchPreviewCard
             headerContent={headerContent}
             bio={bio}
             videoUrl={videoUrl}
+            portfolio={portfolio}
         />
     )
 }
