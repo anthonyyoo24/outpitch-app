@@ -13,6 +13,7 @@ export function PitchPreviewCardEditor() {
     const techStack = watch("tech_stack")
     const workExperience = watch("work_experience")
     const contact = watch("contact")
+    const resumeUrl = watch("resume_url")
 
     return (
         <PitchPreviewCard
@@ -23,6 +24,7 @@ export function PitchPreviewCardEditor() {
             techStack={techStack}
             workExperience={workExperience}
             contact={contact}
+            resumeUrl={resumeUrl}
         />
     )
 }

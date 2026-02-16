@@ -6,18 +6,20 @@ import { ArrowRight, Mail, Phone, Twitter, Github, Linkedin, Globe, X } from "lu
 interface PitchCardContactProps {
     email: string
     calendlyLink?: string
+    resumeUrl?: string | null
 }
 
-export function PitchCardContact({ email, calendlyLink }: PitchCardContactProps) {
+export function PitchCardContact({ email, calendlyLink, resumeUrl }: PitchCardContactProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const hasCalendly = Boolean(calendlyLink)
+    const hasResume = Boolean(resumeUrl)
 
 
     return (
         <>
             <section className="pt-8 border-t border-neutral-200 w-full">
                 <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-3 sm:flex-row">
+                    <div className={`flex flex-col gap-3 sm:flex-row ${!hasResume ? 'sm:justify-center' : ''}`}>
                         {hasCalendly ? (
                             <button
                                 className="flex items-center justify-center gap-3 bg-neutral-900 text-white text-sm font-semibold rounded-full px-6 py-3.5 hover:bg-neutral-800 transition-colors w-full active:scale-95 duration-200 shadow-md hover:shadow-lg cursor-pointer"
@@ -35,17 +37,24 @@ export function PitchCardContact({ email, calendlyLink }: PitchCardContactProps)
                                 Send email
                             </a>
                         )}
-                        <a href="#"
-                            className="flex items-center justify-center gap-2 border border-neutral-200 text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-50 transition-colors px-6 py-3.5 w-full sm:w-auto">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                                strokeLinejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" x2="12" y1="15" y2="3"></line>
-                            </svg>
-                            Resume
-                        </a>
+                        {hasResume && (
+                            <a
+                                href={resumeUrl!}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center gap-2 border border-neutral-200 text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-50 transition-colors px-6 py-3.5 w-full sm:w-auto"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                                    strokeLinejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" x2="12" y1="15" y2="3"></line>
+                                </svg>
+                                Resume
+                            </a>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-6 w-full justify-center mt-4 pt-2">
