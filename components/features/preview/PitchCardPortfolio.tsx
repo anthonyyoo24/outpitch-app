@@ -12,7 +12,13 @@ interface PitchCardPortfolioProps {
 }
 
 export function PitchCardPortfolio({ portfolio }: PitchCardPortfolioProps) {
-    if (!portfolio || portfolio.length === 0) {
+    // Filter out empty items (items without title or description)
+    const validPortfolio = portfolio?.filter(
+        (item) => item.title?.trim() || item.description?.trim()
+    )
+
+    // Don't render section if no valid portfolio items
+    if (!validPortfolio || validPortfolio.length === 0) {
         return null
     }
 
@@ -48,7 +54,7 @@ export function PitchCardPortfolio({ portfolio }: PitchCardPortfolioProps) {
             </div>
 
             <div className="space-y-3">
-                {portfolio.map((item, index) => (
+                {validPortfolio.map((item, index) => (
                     <a
                         key={index}
                         href={item.link || "#"}

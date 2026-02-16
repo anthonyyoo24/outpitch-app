@@ -45,8 +45,13 @@ function formatDateRange(experience: WorkExperience): string {
 }
 
 export function PitchCardExperience({ workExperience }: PitchCardExperienceProps) {
-    // Don't render section if no work experience items
-    if (!workExperience || workExperience.length === 0) {
+    // Filter out empty items (items without role or company)
+    const validExperience = workExperience?.filter(
+        (exp) => exp.role?.trim() || exp.company?.trim()
+    )
+
+    // Don't render section if no valid work experience items
+    if (!validExperience || validExperience.length === 0) {
         return null
     }
 
@@ -66,7 +71,7 @@ export function PitchCardExperience({ workExperience }: PitchCardExperienceProps
             </div>
 
             <div className="space-y-3">
-                {workExperience.map((experience, index) => {
+                {validExperience.map((experience, index) => {
                     const dateRange = formatDateRange(experience)
 
                     return (
