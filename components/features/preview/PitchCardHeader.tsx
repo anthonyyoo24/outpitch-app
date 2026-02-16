@@ -1,4 +1,4 @@
-import { Play } from "lucide-react"
+import { PitchCardVideo } from "./PitchCardVideo"
 
 interface PitchCardHeaderProps {
     headerContent: string
@@ -17,28 +17,7 @@ export function PitchCardHeader({ headerContent, bio, videoUrl }: PitchCardHeade
             </div>
 
             {/* Video Bubble */}
-            <div className="relative shrink-0 w-28 h-28 rounded-full border border-neutral-100 overflow-hidden mt-8 mb-8 bg-neutral-50 sm:w-36 sm:h-36 shadow-xl shadow-neutral-200/50 group cursor-pointer">
-                {videoUrl ? (
-                    <video
-                        src={videoUrl}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover"
-                        style={{
-                            filter: 'saturate(0.85) contrast(1.15) brightness(1.05)',
-                        }}
-                    />
-                ) : (
-                    <div className="w-full h-full bg-neutral-100" />
-                )}
-                <div className="flex bg-white/5 absolute top-0 right-0 bottom-0 left-0 items-center justify-center pointer-events-none z-10">
-                    <div className="bg-white/30 backdrop-blur-sm border border-white/40 rounded-full w-12 h-12 flex items-center justify-center pl-1 group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                        <Play className="w-5 h-5 text-black fill-current" />
-                    </div>
-                </div>
-            </div>
+            <PitchCardVideo videoUrl={videoUrl} />
 
             {bio && (
                 <section className="mb-12">
