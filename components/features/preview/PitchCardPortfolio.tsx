@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react"
 
-export function PitchCardWork() {
+export function PitchCardPortfolio() {
     return (
         <section className="mb-10">
             <div className="flex items-center justify-between mb-6 border-b border-neutral-200 pb-2">
