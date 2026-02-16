@@ -3,21 +3,38 @@
 import { useState } from "react"
 import { ArrowRight, Mail, Phone, Twitter, Github, Linkedin, Globe, X } from "lucide-react"
 
-export function PitchCardContact() {
+interface PitchCardContactProps {
+    email: string
+    calendlyLink?: string
+}
+
+export function PitchCardContact({ email, calendlyLink }: PitchCardContactProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const hasCalendly = Boolean(calendlyLink)
+
 
     return (
         <>
             <section className="pt-8 border-t border-neutral-200 w-full">
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-3 sm:flex-row">
-                        <button
-                            className="flex items-center justify-center gap-3 bg-neutral-900 text-white text-sm font-semibold rounded-full px-6 py-3.5 hover:bg-neutral-800 transition-colors w-full active:scale-95 duration-200 shadow-md hover:shadow-lg cursor-pointer"
-                            onClick={() => setIsMenuOpen(true)}
-                        >
-                            Get in touch
-                            <ArrowRight className="w-4 h-4" />
-                        </button>
+                        {hasCalendly ? (
+                            <button
+                                className="flex items-center justify-center gap-3 bg-neutral-900 text-white text-sm font-semibold rounded-full px-6 py-3.5 hover:bg-neutral-800 transition-colors w-full active:scale-95 duration-200 shadow-md hover:shadow-lg cursor-pointer"
+                                onClick={() => setIsMenuOpen(true)}
+                            >
+                                Get in touch
+                                <ArrowRight className="w-4 h-4" />
+                            </button>
+                        ) : (
+                            <a
+                                href={`mailto:${email}`}
+                                className="flex items-center justify-center gap-3 bg-neutral-900 text-white text-sm font-semibold rounded-full px-6 py-3.5 hover:bg-neutral-800 transition-colors w-full active:scale-95 duration-200 shadow-md hover:shadow-lg cursor-pointer"
+                            >
+                                <Mail className="w-4 h-4" />
+                                Send email
+                            </a>
+                        )}
                         <a href="#"
                             className="flex items-center justify-center gap-2 border border-neutral-200 text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-50 transition-colors px-6 py-3.5 w-full sm:w-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -49,21 +66,23 @@ export function PitchCardContact() {
             </section>
 
             {/* Menu Overlay */}
-            {isMenuOpen && (
+            {hasCalendly && isMenuOpen && (
                 <div className="absolute inset-0 z-100 flex items-end justify-center p-4">
                     <div
                         className="absolute inset-0 bg-white/80 backdrop-blur-sm transition-all duration-300"
                         onClick={() => setIsMenuOpen(false)}
                     />
                     <div className="relative mb-60 sm:mb-56 z-10 grid grid-cols-1 gap-3 w-full max-w-70 animate-pop-in">
-                        <a href="#"
-                            className="group bg-neutral-900 rounded-full p-4 flex flex-row items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer shadow-lg">
+                        <button
+                            onClick={() => window.open(calendlyLink, '_blank', 'noopener,noreferrer')}
+                            className="group bg-neutral-900 rounded-full p-4 flex flex-row items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer shadow-lg"
+                        >
                             <Phone className="w-4.5 h-4.5 text-white" />
                             <span className="text-white font-semibold text-sm tracking-tight">
                                 Book a call
                             </span>
-                        </a>
-                        <a href="mailto:hello@alexrivera.com"
+                        </button>
+                        <a href={`mailto:${email}`}
                             className="group bg-white border border-neutral-200 rounded-full p-4 flex flex-row items-center justify-center gap-3 hover:border-neutral-300 hover:bg-neutral-50 transition-all duration-300 cursor-pointer shadow-sm">
                             <Mail className="w-4.5 h-4.5 text-neutral-900" />
                             <span className="text-neutral-900 font-medium text-sm tracking-tight">
@@ -78,7 +97,8 @@ export function PitchCardContact() {
                         </button>
                     </div>
                 </div>
-            )}
+            )
+            }
         </>
     )
 }
