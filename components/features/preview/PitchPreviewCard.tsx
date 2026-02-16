@@ -16,16 +16,26 @@ interface PitchPreviewCardProps {
         image_url?: string | null
     }>
     techStack?: string[]
+    workExperience?: Array<{
+        role: string
+        company: string
+        start_month?: string
+        start_year?: string
+        end_month?: string
+        end_year?: string
+        is_current?: boolean
+        description: string
+    }>
 }
 
-export function PitchPreviewCard({ headerContent, bio, videoUrl, portfolio, techStack }: PitchPreviewCardProps) {
+export function PitchPreviewCard({ headerContent, bio, videoUrl, portfolio, techStack, workExperience }: PitchPreviewCardProps) {
     return (
         <div className="relative w-full max-w-full animate-fade-in sm:max-w-125 mx-auto">
             <div className="sm:p-10 flex flex-col overflow-hidden sm:rounded-[40px] bg-white border-neutral-200/80 border rounded-3xl p-6 relative shadow-[0_2.8px_2.2px_rgba(0,0,0,0.034),0_6.7px_5.3px_rgba(0,0,0,0.048),0_12.5px_10px_rgba(0,0,0,0.06),0_22.3px_17.9px_rgba(0,0,0,0.072),0_41.8px_33.4px_rgba(0,0,0,0.086),0_100px_80px_rgba(0,0,0,0.12)]">
                 <PitchCardHeader headerContent={headerContent} bio={bio} videoUrl={videoUrl} />
                 <PitchCardPortfolio portfolio={portfolio} />
                 <PitchCardTech techStack={techStack} />
-                <PitchCardExperience />
+                <PitchCardExperience workExperience={workExperience} />
                 <PitchCardContact />
             </div>
         </div>

@@ -11,6 +11,7 @@ export function PitchPreviewCardEditor() {
     const videoUrl = watch("video_url")
     const portfolio = watch("portfolio")
     const techStack = watch("tech_stack")
+    const workExperience = watch("work_experience")
 
     return (
         <PitchPreviewCard
@@ -19,6 +20,7 @@ export function PitchPreviewCardEditor() {
             videoUrl={videoUrl}
             portfolio={portfolio}
             techStack={techStack}
+            workExperience={workExperience}
         />
     )
 }
