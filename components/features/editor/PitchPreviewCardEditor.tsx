@@ -13,6 +13,7 @@ export function PitchPreviewCardEditor() {
     const techStack = watch("tech_stack")
     const workExperience = watch("work_experience")
     const contact = watch("contact")
+    const socialLinks = watch("social_links")
     const resumeUrl = watch("resume_url")
 
     return (
@@ -24,6 +25,7 @@ export function PitchPreviewCardEditor() {
             techStack={techStack}
             workExperience={workExperience}
             contact={contact}
+            socialLinks={socialLinks}
             resumeUrl={resumeUrl}
         />
     )

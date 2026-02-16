@@ -1,18 +1,23 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowRight, Mail, Phone, Twitter, Github, Linkedin, Globe, X } from "lucide-react"
+import { ArrowRight, Mail, Phone, X } from "lucide-react"
+import { PLATFORMS } from "@/components/features/editor/card/contact/constants"
 
 interface PitchCardContactProps {
     email: string
     calendlyLink?: string
     resumeUrl?: string | null
+    socialLinks?: Array<{ platform: string; url: string }>
 }
 
-export function PitchCardContact({ email, calendlyLink, resumeUrl }: PitchCardContactProps) {
+export function PitchCardContact({ email, calendlyLink, resumeUrl, socialLinks }: PitchCardContactProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const hasCalendly = Boolean(calendlyLink)
     const hasResume = Boolean(resumeUrl)
+
+    // Filter valid social links (non-empty URLs)
+    const validLinks = socialLinks?.filter(link => link.url && link.url.trim() !== '') || []
 
 
     return (
@@ -57,20 +62,27 @@ export function PitchCardContact({ email, calendlyLink, resumeUrl }: PitchCardCo
                         )}
                     </div>
 
-                    <div className="flex items-center gap-6 w-full justify-center mt-4 pt-2">
-                        <a href="#" className="hover:text-black transition-colors text-neutral-400 hover:scale-110 duration-200">
-                            <Twitter className="w-4.5 h-4.5" />
-                        </a>
-                        <a href="#" className="hover:text-black transition-colors text-neutral-400 hover:scale-110 duration-200">
-                            <Github className="w-4.5 h-4.5" />
-                        </a>
-                        <a href="#" className="hover:text-black transition-colors text-neutral-400 hover:scale-110 duration-200">
-                            <Linkedin className="w-4.5 h-4.5" />
-                        </a>
-                        <a href="#" className="hover:text-black transition-colors text-neutral-400 hover:scale-110 duration-200">
-                            <Globe className="w-4.5 h-4.5" />
-                        </a>
-                    </div>
+                    {validLinks.length > 0 && (
+                        <div className="flex items-center gap-6 w-full justify-center mt-4 pt-2">
+                            {validLinks.map((link) => {
+                                const platform = PLATFORMS.find(p => p.id === link.platform)
+                                if (!platform) return null
+
+                                const Icon = platform.icon
+                                return (
+                                    <a
+                                        key={link.platform}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:text-black transition-colors text-neutral-400 hover:scale-110 duration-200"
+                                    >
+                                        <Icon className="w-4.5 h-4.5" />
+                                    </a>
+                                )
+                            })}
+                        </div>
+                    )}
                 </div>
             </section>
 
