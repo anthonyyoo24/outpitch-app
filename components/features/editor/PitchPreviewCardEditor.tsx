@@ -10,6 +10,7 @@ export function PitchPreviewCardEditor() {
     const bio = watch("bio")
     const videoUrl = watch("video_url")
     const portfolio = watch("portfolio")
+    const techStack = watch("tech_stack")
 
     return (
         <PitchPreviewCard
@@ -17,6 +18,7 @@ export function PitchPreviewCardEditor() {
             bio={bio}
             videoUrl={videoUrl}
             portfolio={portfolio}
+            techStack={techStack}
         />
     )
 }

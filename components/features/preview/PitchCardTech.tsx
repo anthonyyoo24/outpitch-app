@@ -1,9 +1,10 @@
 import Image from "next/image"
+import { TECH_SLUG_MAP } from "@/lib/constants/tech-stack-data"
 
-const TechItem = ({ label, iconSlug, colorHex }: { label: string, iconSlug: string, colorHex: string }) => (
+const TechItem = ({ label, iconSlug }: { label: string, iconSlug: string }) => (
     <div className="px-3 py-1.5 rounded-full border flex items-center gap-2 text-[11px] font-medium transition-colors cursor-default bg-white border-neutral-200 text-neutral-700 hover:text-black hover:border-neutral-300 hover:shadow-sm group">
         <Image
-            src={`https://cdn.simpleicons.org/${iconSlug}/${colorHex}`}
+            src={`https://cdn.simpleicons.org/${iconSlug}`}
             alt={label}
             width={12}
             height={12}
@@ -13,7 +14,16 @@ const TechItem = ({ label, iconSlug, colorHex }: { label: string, iconSlug: stri
     </div>
 )
 
-export function PitchCardTech() {
+interface PitchCardTechProps {
+    techStack?: string[]
+}
+
+export function PitchCardTech({ techStack }: PitchCardTechProps) {
+    // Don't render section if no tech stack items
+    if (!techStack || techStack.length === 0) {
+        return null
+    }
+
     return (
         <section className="mb-10">
             <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
@@ -28,12 +38,11 @@ export function PitchCardTech() {
                 </h3>
             </div>
             <div className="flex flex-wrap gap-2">
-                <TechItem label="React" iconSlug="react" colorHex="61DAFB" />
-                <TechItem label="Tailwind" iconSlug="tailwindcss" colorHex="06B6D4" />
-                <TechItem label="Next.js" iconSlug="nextdotjs" colorHex="000000" />
-                <TechItem label="TypeScript" iconSlug="typescript" colorHex="3178C6" />
-                <TechItem label="Supabase" iconSlug="supabase" colorHex="3ECF8E" />
-                <TechItem label="Figma" iconSlug="figma" colorHex="F24E1E" />
+                {techStack.map((techName) => {
+                    // Look up the icon slug from the mapping
+                    const iconSlug = TECH_SLUG_MAP[techName.toLowerCase()] || "code"
+                    return <TechItem key={techName} label={techName} iconSlug={iconSlug} />
+                })}
             </div>
         </section>
     )
