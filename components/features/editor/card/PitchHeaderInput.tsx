@@ -49,10 +49,25 @@ const FontSize = Extension.create({
     },
 });
 
+const NEUTRAL_COLORS = [
+    { hex: '#fafafa', tailwindClass: 'neutral-50' },
+    { hex: '#f5f5f5', tailwindClass: 'neutral-100' },
+    { hex: '#e5e5e5', tailwindClass: 'neutral-200' },
+    { hex: '#d4d4d4', tailwindClass: 'neutral-300' },
+    { hex: '#a3a3a3', tailwindClass: 'neutral-400' },
+    { hex: '#737373', tailwindClass: 'neutral-500' },
+    { hex: '#525252', tailwindClass: 'neutral-600' },
+    { hex: '#404040', tailwindClass: 'neutral-700' },
+    { hex: '#262626', tailwindClass: 'neutral-800' },
+    { hex: '#171717', tailwindClass: 'neutral-900' },
+    { hex: '#0a0a0a', tailwindClass: 'neutral-950' },
+] as const
+
 export function PitchHeaderInput() {
     const { setValue, watch, register, formState: { errors } } = useFormContext()
     const headerContent = watch("header_content")
     const [currentFontSize, setCurrentFontSize] = React.useState("40px")
+    const [selectedColor, setSelectedColor] = React.useState<string | null>(null)
     const error = errors.header_content?.message as string | undefined
 
     React.useEffect(() => {
@@ -95,6 +110,13 @@ export function PitchHeaderInput() {
             .run()
 
         setCurrentFontSize(size)
+    }
+
+    const handleColorSelect = (hex: string) => {
+        if (!editor) return
+
+        editor.chain().focus().setColor(hex).run()
+        setSelectedColor(hex)
     }
 
     if (!editor) {
@@ -167,37 +189,61 @@ export function PitchHeaderInput() {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button
-                                    className={`flex items-center gap-1.5 cursor-pointer p-1.5 rounded-lg transition-colors focus:outline-none outline-none group/color shrink-0 select-none ${editor.getAttributes('textStyle').color ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-400 hover:text-neutral-900 hover:bg-neutral-200/50'}`}
+                                    className={`flex items-center gap-1.5 cursor-pointer p-1.5 rounded-lg transition-colors focus:outline-none outline-none group/color shrink-0 select-none ${selectedColor ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-400 hover:text-neutral-900 hover:bg-neutral-200/50'}`}
                                     type="button"
                                     title="Text Color"
                                 >
-                                    <Palette className="w-3.5 h-3.5" style={{ color: editor.getAttributes('textStyle').color }} />
+                                    <Palette className="w-3.5 h-3.5" />
                                 </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="w-[200px] p-2 bg-white border border-neutral-100 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center justify-between px-2 py-1">
-                                        <span className="text-[10px] uppercase font-bold text-neutral-400 font-mono tracking-wider">Custom Color</span>
-                                    </div>
-                                    <div className="px-2 pb-1">
-                                        <div className="relative flex items-center gap-2">
-                                            <div className="relative w-8 h-8 rounded-full overflow-hidden shadow-sm border border-neutral-200 ring-1 ring-neutral-100 shrink-0 cursor-pointer hover:ring-2 hover:ring-neutral-300 transition-all">
-                                                <input
-                                                    type="color"
-                                                    className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] p-0 m-0 border-0 cursor-pointer"
-                                                    onInput={(e) => editor.chain().focus().setColor((e.target as HTMLInputElement).value).run()}
-                                                    value={editor.getAttributes('textStyle').color || '#000000'}
-                                                />
-                                            </div>
-                                            <span className="text-[10px] font-mono text-neutral-500">Pick a color...</span>
-                                        </div>
+                            <DropdownMenuContent align="start" className="w-84 p-3 bg-white border border-neutral-100 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex items-center justify-between px-1">
+                                        <span className="text-[10px] uppercase font-bold text-neutral-400 font-mono tracking-wider">Color Picker</span>
                                     </div>
 
-                                    {(editor.getAttributes('textStyle').color) && (
+                                    {/* Color Swatches Grid */}
+                                    <div className="grid grid-cols-11 gap-2 px-1">
+                                        {NEUTRAL_COLORS.map((color) => {
+                                            const isSelected = selectedColor === color.hex
+                                            const isLight = ['neutral-50', 'neutral-100', 'neutral-200', 'neutral-300'].includes(color.tailwindClass)
+
+                                            return (
+                                                <button
+                                                    key={color.tailwindClass}
+                                                    type="button"
+                                                    onClick={() => handleColorSelect(color.hex)}
+                                                    title={color.tailwindClass}
+                                                    className={`relative w-6 h-6 rounded-full transition-transform cursor-pointer hover:scale-110 ${isLight ? 'border border-neutral-300' : ''
+                                                        } ${isSelected ? 'ring-2 ring-neutral-900 ring-offset-1' : ''}`}
+                                                    style={{ backgroundColor: color.hex }}
+                                                >
+                                                    {isSelected && (
+                                                        <div className="absolute inset-0 flex items-center justify-center">
+                                                            <svg
+                                                                className={`w-3 h-3 ${isLight ? 'text-neutral-900' : 'text-white'}`}
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                                strokeWidth={3}
+                                                            >
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                    )}
+                                                </button>
+                                            )
+                                        })}
+                                    </div>
+
+                                    {selectedColor && (
                                         <>
-                                            <DropdownMenuSeparator className="bg-neutral-100 my-1" />
+                                            <DropdownMenuSeparator className="bg-neutral-100" />
                                             <DropdownMenuItem
-                                                onClick={() => editor.chain().focus().unsetColor().run()}
+                                                onClick={() => {
+                                                    editor.chain().focus().unsetColor().run()
+                                                    setSelectedColor(null)
+                                                }}
                                                 className="w-full flex items-center gap-2 px-2 py-1.5 text-[10px] text-red-500 hover:text-red-700 focus:text-red-700 hover:bg-red-50 focus:bg-red-50 rounded-lg transition-colors font-mono cursor-pointer"
                                             >
                                                 <X className="w-3 h-3" />
