@@ -52,7 +52,7 @@ export function SidebarListItem({ pitch }: SidebarListItemProps) {
                                     }`}
                             ></span>
                             <span className="text-[10px] font-medium text-neutral-700 capitalize">
-                                {displayStatus}
+                                {displayStatus === "published" ? "live" : displayStatus}
                             </span>
                         </div>
                         <span className="mx-1.5 text-[10px] text-neutral-400">|</span>
