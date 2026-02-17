@@ -22,16 +22,25 @@ export function PitchCardVideo({ videoUrl }: PitchCardVideoProps) {
             videoRef.current.muted = false
             videoRef.current.loop = false // Disable looping in playback mode
             videoRef.current.currentTime = 0 // Reset to beginning
-            videoRef.current.play()
-            setIsPlaying(true)
+
+            // Attempt unmuted playback, fall back to muted if blocked
+            videoRef.current.play().catch((error) => {
+                console.warn('Unmuted playback blocked, falling back to muted:', error)
+                if (videoRef.current) {
+                    videoRef.current.muted = true
+                    videoRef.current.play().catch((fallbackError) => {
+                        console.error('Muted playback also failed:', fallbackError)
+                    })
+                }
+            })
         } else {
             // Subsequent clicks: toggle play/pause
             if (isPlaying) {
                 videoRef.current.pause()
-                setIsPlaying(false)
             } else {
-                videoRef.current.play()
-                setIsPlaying(true)
+                videoRef.current.play().catch((error) => {
+                    console.warn('Playback failed:', error)
+                })
             }
         }
     }
