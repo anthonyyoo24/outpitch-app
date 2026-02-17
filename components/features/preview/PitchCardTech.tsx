@@ -1,15 +1,20 @@
+import { Code } from "lucide-react"
 import Image from "next/image"
 import { TECH_SLUG_MAP } from "@/lib/constants/tech-stack-data"
 
-const TechItem = ({ label, iconSlug }: { label: string, iconSlug: string }) => (
+const TechItem = ({ label, iconSlug }: { label: string, iconSlug: string | null }) => (
     <div className="px-3 py-1.5 rounded-full border flex items-center gap-2 text-[11px] font-medium transition-colors cursor-default bg-white border-neutral-200 text-neutral-700 hover:text-black hover:border-neutral-300 hover:shadow-sm group">
-        <Image
-            src={`https://cdn.simpleicons.org/${iconSlug}`}
-            alt={label}
-            width={12}
-            height={12}
-            className="w-3 h-3 group-hover:scale-110 transition-transform"
-        />
+        {iconSlug ? (
+            <Image
+                src={`https://cdn.simpleicons.org/${iconSlug}`}
+                alt={label}
+                width={12}
+                height={12}
+                className="w-3 h-3 group-hover:scale-110 transition-transform"
+            />
+        ) : (
+            <Code className="w-3 h-3 text-neutral-500" />
+        )}
         {label}
     </div>
 )
@@ -40,7 +45,7 @@ export function PitchCardTech({ techStack }: PitchCardTechProps) {
             <div className="flex flex-wrap gap-2">
                 {techStack.map((techName) => {
                     // Look up the icon slug from the mapping
-                    const iconSlug = TECH_SLUG_MAP[techName.toLowerCase()] || "code"
+                    const iconSlug = TECH_SLUG_MAP[techName.toLowerCase()] || null
                     return <TechItem key={techName} label={techName} iconSlug={iconSlug} />
                 })}
             </div>
