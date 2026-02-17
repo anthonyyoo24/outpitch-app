@@ -43,14 +43,14 @@ export function PitchCardPortfolio({ portfolio }: PitchCardPortfolioProps) {
                     </svg>
                     Selected Work
                 </h3>
-                <a href="#"
+                {/* <a href="#"
                     className="text-[10px] transition-colors hover:text-neutral-900 flex items-center gap-1 uppercase tracking-widest text-neutral-500 font-medium">
                     View All
                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M5 12h14m-7-7 7 7-7 7"></path>
                     </svg>
-                </a>
+                </a> */}
             </div>
 
             <div className="space-y-3">
