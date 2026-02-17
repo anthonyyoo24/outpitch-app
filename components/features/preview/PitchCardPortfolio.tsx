@@ -54,14 +54,8 @@ export function PitchCardPortfolio({ portfolio }: PitchCardPortfolioProps) {
             </div>
 
             <div className="space-y-3">
-                {validPortfolio.map((item, index) => (
-                    <a
-                        key={index}
-                        href={item.link || "#"}
-                        className="group block p-1 rounded-2xl transition-all duration-300 hover:bg-neutral-100"
-                        target={item.link ? "_blank" : undefined}
-                        rel={item.link ? "noopener noreferrer" : undefined}
-                    >
+                {validPortfolio.map((item, index) => {
+                    const content = (
                         <div className="flex items-center p-2 gap-4 sm:p-3">
                             <div className="w-12 h-12 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-center shrink-0 group-hover:border-neutral-300 transition-colors shadow-sm overflow-hidden">
                                 {item.image_url ? (
@@ -93,8 +87,27 @@ export function PitchCardPortfolio({ portfolio }: PitchCardPortfolioProps) {
                                 <ArrowRight className="w-3.5 h-3.5" />
                             </div>
                         </div>
-                    </a>
-                ))}
+                    );
+
+                    return item.link ? (
+                        <a
+                            key={index}
+                            href={item.link}
+                            className="group block p-1 rounded-2xl transition-all duration-300 hover:bg-neutral-100"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {content}
+                        </a>
+                    ) : (
+                        <div
+                            key={index}
+                            className="group block p-1 rounded-2xl transition-all duration-300 hover:bg-neutral-100"
+                        >
+                            {content}
+                        </div>
+                    );
+                })}
             </div>
         </section>
     )
