@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ArrowRight, Mail, Phone, X } from "lucide-react"
 import { PLATFORMS } from "@/components/features/editor/card/contact/constants"
 
@@ -18,6 +18,20 @@ export function PitchCardContact({ email, calendlyLink, resumeUrl, socialLinks }
 
     // Filter valid social links (non-empty URLs)
     const validLinks = socialLinks?.filter(link => link.url && link.url.trim() !== '') || []
+
+    // Escape key handler for accessibility
+    useEffect(() => {
+        if (!isMenuOpen) return
+
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                setIsMenuOpen(false)
+            }
+        }
+
+        document.addEventListener("keydown", handleEscape)
+        return () => document.removeEventListener("keydown", handleEscape)
+    }, [isMenuOpen])
 
 
     return (
@@ -86,7 +100,7 @@ export function PitchCardContact({ email, calendlyLink, resumeUrl, socialLinks }
                 </div>
             </section>
 
-            {/* Menu Overlay */}
+            {/* Contact Menu Dialog */}
             {hasCalendly && isMenuOpen && (
                 <div className="absolute inset-0 z-100 flex items-end justify-center p-4">
                     <div
@@ -103,8 +117,10 @@ export function PitchCardContact({ email, calendlyLink, resumeUrl, socialLinks }
                                 Book a call
                             </span>
                         </button>
-                        <a href={`mailto:${email}`}
-                            className="group bg-white border border-neutral-200 rounded-full p-4 flex flex-row items-center justify-center gap-3 hover:border-neutral-300 hover:bg-neutral-50 transition-all duration-300 cursor-pointer shadow-sm">
+                        <a
+                            href={`mailto:${email}`}
+                            className="group bg-white border border-neutral-200 rounded-full p-4 flex flex-row items-center justify-center gap-3 hover:border-neutral-300 hover:bg-neutral-50 transition-all duration-300 cursor-pointer shadow-sm"
+                        >
                             <Mail className="w-4.5 h-4.5 text-neutral-900" />
                             <span className="text-neutral-900 font-medium text-sm tracking-tight">
                                 Send email
@@ -113,13 +129,13 @@ export function PitchCardContact({ email, calendlyLink, resumeUrl, socialLinks }
                         <button
                             className="absolute -bottom-16 left-1/2 -translate-x-1/2 hover:text-neutral-900 transition-colors text-neutral-500 cursor-pointer"
                             onClick={() => setIsMenuOpen(false)}
+                            aria-label="Close contact menu"
                         >
                             <X className="w-6 h-6" />
                         </button>
                     </div>
                 </div>
-            )
-            }
+            )}
         </>
     )
 }
