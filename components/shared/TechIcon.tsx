@@ -43,7 +43,7 @@ export function TechIcon({
 
     return (
         <Code
-            className={`text-neutral-500 ${className}`}
+            className={`text-neutral-500 ${className ?? ""}`}
             style={{ width, height }}
         />
     )
