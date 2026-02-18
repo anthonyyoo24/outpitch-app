@@ -3,7 +3,7 @@
 import { useFormContext, Controller } from "react-hook-form"
 import { TechTag } from "./TechTag"
 import { TechStackPicker } from "./TechStackPicker"
-import { PitchFormValues } from "../../schema"
+import { PitchFormValues } from "@/lib/schemas/pitch"
 
 export function TechStackInput() {
     const { control } = useFormContext<PitchFormValues>()

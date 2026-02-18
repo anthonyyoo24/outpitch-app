@@ -6,7 +6,7 @@ import { publishPitch, unpublishPitch } from "@/app/dashboard/editor/actions"
 import { useRouter } from "next/navigation"
 import { useFormContext } from "react-hook-form"
 import { toast } from "sonner"
-import { PitchFormValues, publishSchema, ActionStatus } from "./schema"
+import { PitchFormValues, publishSchema, ActionStatus } from "@/lib/schemas/pitch"
 
 interface PitchEditorToolbarProps {
     pitchId: string

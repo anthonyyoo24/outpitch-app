@@ -2,7 +2,7 @@
 
 import { useFormContext } from "react-hook-form"
 import { PitchPreviewCard } from "../preview/PitchPreviewCard"
-import { PitchFormValues } from "./schema"
+import { PitchFormValues } from "@/lib/schemas/pitch"
 
 export function PitchPreviewCardEditor() {
     const { watch } = useFormContext<PitchFormValues>()

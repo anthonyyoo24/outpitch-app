@@ -7,7 +7,7 @@ import { PitchEditorToolbar } from "./PitchEditorToolbar"
 import { PitchFormProvider } from "./PitchFormProvider"
 
 
-import { PitchFormValues, ActionStatus } from "./schema"
+import { PitchFormValues, ActionStatus } from "@/lib/schemas/pitch"
 
 interface PitchEditorLayoutProps {
     pitchId: string

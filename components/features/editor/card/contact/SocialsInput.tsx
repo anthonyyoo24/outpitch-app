@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { useFormContext, useFieldArray } from "react-hook-form"
 import { PlusCircle } from "lucide-react"
-import { PitchFormValues } from "@/components/features/editor/schema"
+import { PitchFormValues } from "@/lib/schemas/pitch"
 import { SocialLinkItem } from "./SocialLinkItem"
 import { PlatformId } from "./constants"
 
@@ -67,8 +67,8 @@ export function SocialsInput() {
                         onClick={handleAddLink}
                         disabled={isMaxLinks}
                         className={`w-full py-2.5 rounded-xl border border-dashed text-xs font-medium font-mono group flex items-center justify-center gap-2 transition-all ${isMaxLinks
-                                ? "border-neutral-300 text-neutral-300 cursor-not-allowed opacity-50"
-                                : "border-neutral-400 text-neutral-500 hover:text-neutral-900 hover:border-neutral-500 hover:bg-neutral-50 cursor-pointer"
+                            ? "border-neutral-300 text-neutral-300 cursor-not-allowed opacity-50"
+                            : "border-neutral-400 text-neutral-500 hover:text-neutral-900 hover:border-neutral-500 hover:bg-neutral-50 cursor-pointer"
                             }`}
                     >
                         <PlusCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />

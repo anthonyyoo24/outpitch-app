@@ -3,7 +3,7 @@
 import React from "react"
 import { Calendar, Mail } from "lucide-react"
 import { useFormContext } from "react-hook-form"
-import { PitchFormValues } from "../../schema"
+import { PitchFormValues } from "@/lib/schemas/pitch"
 import { ValidationTooltip } from "../validation/ValidationTooltip"
 
 export function ContactInput() {

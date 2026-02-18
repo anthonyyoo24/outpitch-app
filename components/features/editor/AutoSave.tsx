@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback } from "react"
 import { useFormContext, DefaultValues } from "react-hook-form"
 import { updatePitch } from "@/app/dashboard/editor/actions"
-import { PitchFormValues } from "./schema"
+import { PitchFormValues } from "@/lib/schemas/pitch"
 
 interface AutoSaveProps {
     pitchId: string

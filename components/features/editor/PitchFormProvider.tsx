@@ -4,7 +4,7 @@ import React from "react"
 import { useForm, FormProvider, DefaultValues, Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import dynamic from "next/dynamic"
-import { pitchSchema, PitchFormValues } from "./schema"
+import { pitchSchema, PitchFormValues } from "@/lib/schemas/pitch"
 
 const AutoSave = dynamic(() => import("./AutoSave").then((mod) => mod.AutoSave), { ssr: false })
 const DevTool = dynamic(() => import("@hookform/devtools").then((mod) => mod.DevTool), { ssr: false })

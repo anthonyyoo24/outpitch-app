@@ -1,4 +1,3 @@
-
 import { z } from "zod"
 
 export const pitchSchema = z.object({
@@ -62,4 +61,3 @@ export const publishSchema = pitchSchema.extend({
 
 export type PitchFormValues = z.infer<typeof pitchSchema>
 export type ActionStatus = "idle" | "success-published" | "success-unpublished"
-

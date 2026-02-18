@@ -1,7 +1,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
-import { PitchFormValues, pitchSchema, publishSchema } from "@/components/features/editor/schema"
+import { PitchFormValues, pitchSchema, publishSchema } from "@/lib/schemas/pitch"
 import { sanitizeHtml } from "@/lib/sanitize"
 
 
