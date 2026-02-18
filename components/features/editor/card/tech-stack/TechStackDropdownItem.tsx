@@ -1,7 +1,7 @@
 import { CommandItem } from "@/components/ui/Command"
-import { Check, Code, Plus } from "lucide-react"
-import Image from "next/image"
+import { Check, Plus } from "lucide-react"
 import { TechItem } from "@/lib/constants/tech-stack-data"
+import { TechIcon } from "@/components/shared/TechIcon"
 
 interface TechStackDropdownItemProps {
     item: TechItem | { name: string; slug: string }
@@ -21,24 +21,17 @@ export function TechStackDropdownItem({ item, isSelected, isCreateOption, onSele
             )
         }
 
-        const logoUrl = item.slug ? `https://cdn.simpleicons.org/${item.slug}` : null
-
         return (
             <div className="flex items-center gap-2 w-full">
-                {logoUrl ? (
-                    <div className="relative w-4 h-4 shrink-0">
-                        <Image
-                            src={logoUrl}
-                            alt={item.name}
-                            fill
-                            className="object-contain"
-                            unoptimized
-                        />
-                    </div>
-                ) : null}
-
-                {/* Fallback Icon (initially hidden if logo exists) */}
-                <Code className={`w-4 h-4 text-neutral-400 ${logoUrl ? 'hidden' : ''}`} />
+                <div className="relative w-4 h-4 shrink-0 flex items-center justify-center">
+                    <TechIcon
+                        name={item.name}
+                        slug={item.slug}
+                        width={16}
+                        height={16}
+                        className="w-4 h-4 object-contain"
+                    />
+                </div>
 
                 <span>{item.name}</span>
                 {isSelected && <Check className="ml-auto w-4 h-4 text-neutral-400" />}

@@ -16,6 +16,7 @@ interface SocialLinkItemProps {
     onToggle: () => void
     onClose: () => void
     error?: string
+    usedPlatforms: PlatformId[]
 }
 
 export function SocialLinkItem({
@@ -28,7 +29,8 @@ export function SocialLinkItem({
     isOpen,
     onToggle,
     onClose,
-    error
+    error,
+    usedPlatforms
 }: SocialLinkItemProps) {
     // Determine the current platform definition or fallback to "Select"
     const platform = PLATFORMS.find(p => p.id === platformValue) || SELECT_PLATFORM
@@ -81,12 +83,19 @@ export function SocialLinkItem({
                 >
                     {PLATFORMS.map((p) => {
                         const PIcon = p.icon
+                        const isUsed = usedPlatforms.includes(p.id) && p.id !== platformValue
                         return (
                             <button
                                 key={p.id}
                                 type="button"
-                                onClick={() => handlePlatformSelect(p.id)}
-                                className={`w-full px-3 py-2 cursor-pointer text-left text-xs text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 font-mono flex items-center gap-2 transition-colors rounded-lg ${p.id === platformValue ? "bg-neutral-50 text-neutral-900 font-medium" : ""}`}
+                                disabled={isUsed}
+                                onClick={isUsed ? undefined : () => handlePlatformSelect(p.id)}
+                                className={`w-full px-3 py-2 text-left text-xs font-mono flex items-center gap-2 transition-colors rounded-lg ${p.id === platformValue
+                                        ? "bg-neutral-50 text-neutral-900 font-medium"
+                                        : isUsed
+                                            ? "text-neutral-300 cursor-not-allowed opacity-50"
+                                            : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 cursor-pointer"
+                                    }`}
                             >
                                 <PIcon className="w-3.5 h-3.5" />
                                 {p.label}

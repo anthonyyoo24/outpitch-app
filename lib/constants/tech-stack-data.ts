@@ -35,7 +35,7 @@ export const TECH_STACK_DATA: TechItem[] = [
     { name: "Laravel", slug: "laravel", category: "Development" },
     { name: "Ruby on Rails", slug: "rubyonrails", category: "Development" },
     { name: "Flutter", slug: "flutter", category: "Development" },
-    { name: "React Native", slug: "reactnative", category: "Development" },
+    { name: "React Native", slug: "react", category: "Development" },
     { name: "Expo", slug: "expo", category: "Development" },
     { name: "Tailwind CSS", slug: "tailwindcss", category: "Development" },
     { name: "Sass", slug: "sass", category: "Development" },

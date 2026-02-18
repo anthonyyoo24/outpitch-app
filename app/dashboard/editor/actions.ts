@@ -2,6 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { PitchFormValues, pitchSchema, publishSchema } from "@/components/features/editor/schema"
+import { sanitizeHtml } from "@/lib/sanitize"
+
 
 export async function getPitch(pitchId: string) {
     const validation = pitchSchema.shape.id.safeParse(pitchId)
@@ -97,7 +99,7 @@ export async function updatePitch(pitchId: string, values: PitchFormValues) {
             calendly_link: parsedValues.contact.calendly_link,
             email: parsedValues.contact.email, // New Column
 
-            header_content: parsedValues.header_content, // Requires column to exist
+            header_content: sanitizeHtml(parsedValues.header_content), // Sanitize to prevent XSS
             tech_stack: parsedValues.tech_stack,
             work_experience: parsedValues.work_experience,
             portfolio: parsedValues.portfolio,

@@ -17,6 +17,12 @@ export function SocialsInput() {
     // Track which dropdown is open (by index)
     const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null)
 
+    // Calculate which platforms are already in use
+    const usedPlatforms = fields.map(f => f.platform as PlatformId).filter(p => p !== "")
+
+    // Check if max links reached
+    const isMaxLinks = fields.length >= 6
+
     const handleAddLink = () => {
         // Adds a new item to the 'social_links' array in the form state.
         // We initialize it with empty strings so it shows up as a blank "Select" row in the UI.
@@ -49,6 +55,7 @@ export function SocialsInput() {
                             onToggle={() => setOpenDropdownIndex(isDropdownOpen ? null : index)}
                             onClose={() => setOpenDropdownIndex(null)}
                             error={error}
+                            usedPlatforms={usedPlatforms}
                         />
                     )
                 })}
@@ -58,7 +65,11 @@ export function SocialsInput() {
                     <button
                         type="button"
                         onClick={handleAddLink}
-                        className="w-full py-2.5 cursor-pointer rounded-xl border border-dashed border-neutral-400 text-neutral-500 hover:text-neutral-900 hover:border-neutral-500 hover:bg-neutral-50 transition-all flex items-center justify-center gap-2 text-xs font-medium font-mono group"
+                        disabled={isMaxLinks}
+                        className={`w-full py-2.5 rounded-xl border border-dashed text-xs font-medium font-mono group flex items-center justify-center gap-2 transition-all ${isMaxLinks
+                                ? "border-neutral-300 text-neutral-300 cursor-not-allowed opacity-50"
+                                : "border-neutral-400 text-neutral-500 hover:text-neutral-900 hover:border-neutral-500 hover:bg-neutral-50 cursor-pointer"
+                            }`}
                     >
                         <PlusCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
                         Add Link
