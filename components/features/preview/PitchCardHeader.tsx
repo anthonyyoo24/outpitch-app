@@ -17,7 +17,7 @@ export function PitchCardHeader({ headerContent, bio, videoUrl }: PitchCardHeade
             </div>
 
             {/* Video Bubble */}
-            <PitchCardVideo videoUrl={videoUrl} />
+            <PitchCardVideo key={videoUrl} videoUrl={videoUrl} />
 
             {bio && (
                 <section className="mb-12">
