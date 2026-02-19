@@ -8,6 +8,7 @@ export const pitchSchema = z.object({
     header_content: z.string(), // HTML string for the rich text header
     video_url: z.string(),
     video_type: z.enum(["upload", "youtube", "loom"]).nullable().optional(),
+    slug: z.string().nullable().optional(), // [NEW]
     bio: z.string().optional(),
     portfolio: z.array(
         z.object({

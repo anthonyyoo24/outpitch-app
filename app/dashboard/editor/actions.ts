@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { PitchFormValues, pitchSchema, publishSchema } from "@/lib/schemas/pitch"
 import { sanitizeHtml } from "@/lib/sanitize"
+import { slugify } from "@/lib/slug"
 
 
 export async function getPitch(pitchId: string) {
@@ -38,6 +39,7 @@ export async function getPitch(pitchId: string) {
 
         resume_url: data.resume_url || "",
         status: data.status || "draft",
+        slug: (data as any).slug || null,
 
         // New structure: Contact object
         contact: {
@@ -158,12 +160,19 @@ export async function publishPitch(pitchId: string) {
         throw new Error(`Cannot publish: ${errorMessage}`)
     }
 
+    // 4. Generate Slug if first time publishing (or if missing)
+    let slug = currentPitch.slug
+    if (!slug) {
+        slug = slugify(`${currentPitch.company_name}-${currentPitch.role_title}`)
+    }
+
     const { error } = await supabase
         .from("pitches")
         .update({
             status: "published",
             published_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
+            slug: slug // Save the generated slug
         })
         .eq("id", pitchId)
 
@@ -171,7 +180,7 @@ export async function publishPitch(pitchId: string) {
         throw new Error(error.message)
     }
 
-    return { success: true }
+    return { success: true, slug }
 }
 
 export async function unpublishPitch(pitchId: string) {

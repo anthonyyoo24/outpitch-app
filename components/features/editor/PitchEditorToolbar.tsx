@@ -1,15 +1,17 @@
 "use client"
 
 import React, { useState } from "react"
-import { Eye, Rocket, Loader2, Check, EyeOff, Pencil } from "lucide-react"
+import { Eye, Rocket, Loader2, Check, EyeOff, Pencil, Link as LinkIcon } from "lucide-react"
 import { publishPitch, unpublishPitch } from "@/app/dashboard/editor/actions"
 import { useRouter } from "next/navigation"
 import { useFormContext } from "react-hook-form"
 import { toast } from "sonner"
 import { PitchFormValues, publishSchema, ActionStatus } from "@/lib/schemas/pitch"
+import { useUserStore } from "@/lib/store/user-store"
 
 interface PitchEditorToolbarProps {
     pitchId: string
+    slug: string | null
     isPreviewMode: boolean
     onTogglePreview: (isPreview: boolean) => void
     actionStatus: ActionStatus
@@ -18,6 +20,7 @@ interface PitchEditorToolbarProps {
 
 export function PitchEditorToolbar({
     pitchId,
+    slug,
     isPreviewMode,
     onTogglePreview,
     actionStatus,
@@ -25,7 +28,10 @@ export function PitchEditorToolbar({
 }: PitchEditorToolbarProps) {
     const { getValues, setError, watch } = useFormContext<PitchFormValues>()
     const [isPublishing, setIsPublishing] = useState(false)
+    const [isCopied, setIsCopied] = useState(false)
     const router = useRouter()
+    const user = useUserStore((state) => state.user)
+    const profile = useUserStore((state) => state.profile)
 
     // Watch status to react to changes
     const status = watch("status")
@@ -62,6 +68,7 @@ export function PitchEditorToolbar({
         }
 
         setIsPublishing(true)
+
         try {
             await publishPitch(pitchId)
             onActionStatusChange("success-published")
@@ -105,9 +112,42 @@ export function PitchEditorToolbar({
             ? true
             : isPublished
 
+    const handleCopyLink = () => {
+        const username = profile?.username || user?.user_metadata?.username || user?.email?.split('@')[0]
+        if (!username || !slug) return
+
+        const url = `${window.location.origin}/p/${username}/${slug}`
+        navigator.clipboard.writeText(url)
+
+        setIsCopied(true)
+        toast.success("Link copied to clipboard!")
+
+        setTimeout(() => setIsCopied(false), 2000)
+    }
+
     return (
         <div className="absolute top-0 left-0 right-0 h-14 flex items-center justify-end px-6 z-10 pointer-events-none sm:pointer-events-auto">
             <div className="hidden sm:flex items-center gap-2">
+                {isPublished && slug && (
+                    <button
+                        type="button"
+                        onClick={handleCopyLink}
+                        className="group flex items-center gap-2 cursor-pointer border px-4 py-1.5 rounded-full text-xs font-medium shadow-[0_1px_2px_rgba(0,0,0,0.06)] transition-all active:scale-95 bg-white border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-300"
+                    >
+                        {isCopied ? (
+                            <>
+                                <Check className="w-3.5 h-3.5 text-green-500" />
+                                <span className="text-green-600">Copied!</span>
+                            </>
+                        ) : (
+                            <>
+                                <LinkIcon className="w-3.5 h-3.5" />
+                                <span>Share Link</span>
+                            </>
+                        )}
+                    </button>
+                )}
+
                 <button
                     type="button"
                     onClick={() => onTogglePreview(!isPreviewMode)}

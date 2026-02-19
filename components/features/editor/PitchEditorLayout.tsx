@@ -40,6 +40,7 @@ export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutPro
 
                 <PitchEditorToolbar
                     pitchId={pitchId}
+                    slug={(initialData as any).slug}
                     isPreviewMode={isPreviewMode}
                     onTogglePreview={setIsPreviewMode}
                     actionStatus={actionStatus}
