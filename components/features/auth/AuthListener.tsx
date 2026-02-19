@@ -2,72 +2,55 @@
 
 import { useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 import { useUserStore } from "@/lib/store/user-store"
 
 /**
  * A component that handles global authentication logic:
  * 1. Synchronizes the Supabase auth state with the global Zustand store.
- * 2. Checks for a user profile on login and creates one if missing.
+ * 2. Fetches the user profile on login (profile creation is now handled by DB trigger).
  *
  * It renders nothing visible.
  */
 export function AuthListener() {
     const router = useRouter()
     const setUser = useUserStore((state) => state.setUser)
+    const setProfile = useUserStore((state) => state.setProfile)
 
     useEffect(() => {
         const supabase = createClient()
 
-        // --- 1. Sync User State ---
-        // Initial check
-        supabase.auth.getUser().then(({ data }) => {
-            setUser(data.user)
-            if (data.user) checkProfile(data.user)
-        })
-
         // Listen for changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             setUser(session?.user ?? null)
-            if (session?.user) checkProfile(session.user)
-        })
 
-        // --- 2. Profile Check Logic ---
-        const checkProfile = async (user: any) => {
-            // Check if profile exists
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('id')
-                .eq('id', user.id)
-                .single()
-
-            if (!profile) {
-                // Create profile
-                const username = `user_${nanoid(8)}`
-                const fullName = user.user_metadata.full_name || user.email?.split('@')[0]
-
-                const { error } = await supabase
+            if (session?.user) {
+                // Just fetch the profile, don't create it
+                const { data: profile } = await supabase
                     .from('profiles')
-                    .upsert({
-                        id: user.id,
-                        username: username,
-                        full_name: fullName,
-                    }, { onConflict: 'id', ignoreDuplicates: true })
+                    .select('username, full_name, id')
+                    .eq('id', session.user.id)
+                    .single()
 
-                if (!error) {
-                    console.log('Profile created:', username)
-                    router.refresh()
-                } else {
-                    console.error('Error creating profile:', error)
+                if (profile) {
+                    setProfile(profile)
                 }
+            } else {
+                setProfile(null)
             }
-        }
+
+            // router.refresh() forces Next.js to re-fetch Server Components.
+            // When a user signs in, we need the server to re-render the layout 
+            // (e.g. to show 'Dashboard' instead of 'Login' in the header).
+            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                router.refresh()
+            }
+        })
 
         return () => {
             subscription.unsubscribe()
         }
-    }, [setUser, router])
+    }, [setUser, setProfile, router])
 
     return null
 }
