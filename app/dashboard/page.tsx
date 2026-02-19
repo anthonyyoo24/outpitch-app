@@ -31,7 +31,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             return <DashboardError />
         }
 
-        return <PitchEditorLayout pitchId={params.pitchId} initialData={initialData} />
+        return <PitchEditorLayout key={params.pitchId} pitchId={params.pitchId} initialData={initialData} />
     }
 
     // 3. Default Dashboard View (Latest pitch or Empty state)
