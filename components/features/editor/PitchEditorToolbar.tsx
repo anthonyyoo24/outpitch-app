@@ -16,6 +16,7 @@ interface PitchEditorToolbarProps {
     onTogglePreview: (isPreview: boolean) => void
     actionStatus: ActionStatus
     onActionStatusChange: (status: ActionStatus) => void
+    onSlugUpdate: (slug: string) => void
 }
 
 export function PitchEditorToolbar({
@@ -25,6 +26,7 @@ export function PitchEditorToolbar({
     onTogglePreview,
     actionStatus,
     onActionStatusChange,
+    onSlugUpdate,
 }: PitchEditorToolbarProps) {
     const { getValues, setError, watch } = useFormContext<PitchFormValues>()
     const [isPublishing, setIsPublishing] = useState(false)
@@ -70,7 +72,12 @@ export function PitchEditorToolbar({
         setIsPublishing(true)
 
         try {
-            await publishPitch(pitchId)
+            const result = await publishPitch(pitchId)
+
+            if (result.success && result.slug) {
+                onSlugUpdate(result.slug)
+            }
+
             onActionStatusChange("success-published")
             router.refresh()
             toast.success("Pitch published successfully!")

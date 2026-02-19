@@ -23,6 +23,7 @@ export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutPro
     // Initialize preview mode based on status
     const [isPreviewMode, setIsPreviewMode] = useState(initialData.status === "published")
     const [actionStatus, setActionStatus] = useState<ActionStatus>("idle")
+    const [currentSlug, setCurrentSlug] = useState<string | null>((initialData as any).slug || null)
 
     // Reset success state after delay
     React.useEffect(() => {
@@ -40,7 +41,8 @@ export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutPro
 
                 <PitchEditorToolbar
                     pitchId={pitchId}
-                    slug={(initialData as any).slug}
+                    slug={currentSlug}
+                    onSlugUpdate={setCurrentSlug}
                     isPreviewMode={isPreviewMode}
                     onTogglePreview={setIsPreviewMode}
                     actionStatus={actionStatus}

@@ -166,7 +166,7 @@ export async function publishPitch(pitchId: string) {
         slug = slugify(`${currentPitch.company_name}-${currentPitch.role_title}`)
     }
 
-    const { error } = await supabase
+    const { data: updatedPitch, error } = await supabase
         .from("pitches")
         .update({
             status: "published",
@@ -175,12 +175,14 @@ export async function publishPitch(pitchId: string) {
             slug: slug // Save the generated slug
         })
         .eq("id", pitchId)
+        .select("slug")
+        .single()
 
     if (error) {
         throw new Error(error.message)
     }
 
-    return { success: true, slug }
+    return { success: true, slug: updatedPitch.slug }
 }
 
 export async function unpublishPitch(pitchId: string) {
