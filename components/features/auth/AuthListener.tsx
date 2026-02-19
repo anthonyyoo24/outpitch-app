@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useUserStore } from "@/lib/store/user-store"
@@ -16,15 +16,20 @@ export function AuthListener() {
     const router = useRouter()
     const setUser = useUserStore((state) => state.setUser)
     const setProfile = useUserStore((state) => state.setProfile)
+    const listenerCount = useRef(0)
 
     useEffect(() => {
         const supabase = createClient()
 
         // Listen for changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            listenerCount.current += 1
+            const currentListenerId = listenerCount.current
 
             // Handle side effects in a detached async function to avoid blocking the listener
             const handleAuthSideEffects = async () => {
+                if (currentListenerId !== listenerCount.current) return;
+
                 setUser(session?.user ?? null)
 
                 if (session?.user) {
@@ -35,12 +40,18 @@ export function AuthListener() {
                         .eq('id', session.user.id)
                         .single()
 
+                    if (currentListenerId !== listenerCount.current) return;
+
                     if (profile) {
                         setProfile(profile)
+                    } else {
+                        setProfile(null)
                     }
                 } else {
                     setProfile(null)
                 }
+
+                if (currentListenerId !== listenerCount.current) return;
 
                 // router.refresh() forces Next.js to re-fetch Server Components.
                 // When a user signs in, we need the server to re-render the layout 
