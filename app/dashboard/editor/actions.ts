@@ -39,7 +39,7 @@ export async function getPitch(pitchId: string) {
 
         resume_url: data.resume_url || "",
         status: data.status || "draft",
-        slug: (data as any).slug || null,
+        slug: data.slug || null,
 
         // New structure: Contact object
         contact: {

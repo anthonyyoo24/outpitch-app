@@ -42,7 +42,7 @@ export async function createPitchAction(formData: FormData) {
     if (error) {
         // Postgres unique_violation error code
         if (error.code === '23505') {
-            return { error: "A pitch for this role at this company already exists." }
+            return { error: "A pitch for this role at this company already exists. If you'd like to create another, please edit the existing role (ie. add a suffix to the role title)." }
         }
         return { error: error.message }
     }
