@@ -21,30 +21,37 @@ export function AuthListener() {
         const supabase = createClient()
 
         // Listen for changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            setUser(session?.user ?? null)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
 
-            if (session?.user) {
-                // Just fetch the profile, don't create it
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('username, full_name, id')
-                    .eq('id', session.user.id)
-                    .single()
+            // Handle side effects in a detached async function to avoid blocking the listener
+            const handleAuthSideEffects = async () => {
+                setUser(session?.user ?? null)
 
-                if (profile) {
-                    setProfile(profile)
+                if (session?.user) {
+                    // Just fetch the profile, don't create it
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('username, full_name, id')
+                        .eq('id', session.user.id)
+                        .single()
+
+                    if (profile) {
+                        setProfile(profile)
+                    }
+                } else {
+                    setProfile(null)
                 }
-            } else {
-                setProfile(null)
+
+                // router.refresh() forces Next.js to re-fetch Server Components.
+                // When a user signs in, we need the server to re-render the layout 
+                // (e.g. to show 'Dashboard' instead of 'Login' in the header).
+                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                    router.refresh()
+                }
             }
 
-            // router.refresh() forces Next.js to re-fetch Server Components.
-            // When a user signs in, we need the server to re-render the layout 
-            // (e.g. to show 'Dashboard' instead of 'Login' in the header).
-            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-                router.refresh()
-            }
+            // Execute without awaiting
+            handleAuthSideEffects()
         })
 
         return () => {
