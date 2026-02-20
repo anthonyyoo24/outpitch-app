@@ -5,7 +5,7 @@ import { PitchCardTech } from "./PitchCardTech"
 import { PitchCardExperience } from "./PitchCardExperience"
 import { PitchCardContact } from "./PitchCardContact"
 
-interface PitchPreviewCardProps {
+export interface PitchPreviewCardProps {
     headerContent: string
     bio?: string
     videoUrl?: string

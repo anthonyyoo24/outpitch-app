@@ -26,3 +26,15 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+/**
+ * Strips HTML tags from a string and decodes basic entities.
+ * Useful for using rich-text content in plain-text fields like SEO metadata.
+ */
+export function stripHtml(html: string): string {
+  if (!html) return ""
+  return html
+    .replace(/<[^>]*>/g, " ") // Replace tags with space
+    .replace(/\s+/g, " ") // Collapse whitespace
+    .trim()
+}
