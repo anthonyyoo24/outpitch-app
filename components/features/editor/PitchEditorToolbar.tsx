@@ -74,7 +74,11 @@ export function PitchEditorToolbar({
         try {
             const result = await publishPitch(pitchId)
 
-            if (result.success && result.slug) {
+            if (!result.success) {
+                throw new Error("Server returned unsuccessful publish status")
+            }
+
+            if (result.slug) {
                 onSlugUpdate(result.slug)
             }
 
