@@ -23,6 +23,10 @@ export function AuthListener() {
 
         // Listen for changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            // Token refreshes don't change the user's identity, so we can ignore them 
+            // for the heavy profile fetching and UI state updates.
+            if (event === 'TOKEN_REFRESHED') return;
+
             listenerCount.current += 1
             const currentListenerId = listenerCount.current
 
@@ -56,7 +60,7 @@ export function AuthListener() {
                 // router.refresh() forces Next.js to re-fetch Server Components.
                 // When a user signs in, we need the server to re-render the layout 
                 // (e.g. to show 'Dashboard' instead of 'Login' in the header).
-                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                if (event === 'SIGNED_IN') {
                     router.refresh()
                 }
             }
