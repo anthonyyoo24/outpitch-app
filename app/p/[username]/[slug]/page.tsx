@@ -21,22 +21,30 @@ const getStoredPitch = cache(async (username: string, slug: string) => {
     const supabase = await createClient()
 
     // 1. Fetch Profile by Username
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("id")
         .eq("username", username)
-        .single()
+        .maybeSingle()
+
+    if (profileError) {
+        console.error(`[PublicPitchPage] Error fetching profile for username ${username}:`, profileError)
+    }
 
     if (!profile) return { profile: null, pitch: null }
 
     // 2. Fetch Pitch by UserID + Slug + Status=Published
-    const { data: pitch } = await supabase
+    const { data: pitch, error: pitchError } = await supabase
         .from("pitches")
         .select("*")
         .eq("user_id", profile.id)
         .eq("slug", slug)
         .eq("status", "published") // CRITICAL: Only show if published
-        .single()
+        .maybeSingle()
+
+    if (pitchError) {
+        console.error(`[PublicPitchPage] Error fetching pitch for slug ${slug}:`, pitchError)
+    }
 
     return { profile, pitch }
 })
