@@ -3,10 +3,10 @@ import { User } from '@supabase/supabase-js'
 
 interface UserState {
     user: User | null
-    profile: { username: string; full_name: string } | null
+    profile: { username: string; full_name: string | null } | null
     isAuthenticated: boolean
     setUser: (user: User | null) => void
-    setProfile: (profile: { username: string; full_name: string } | null) => void
+    setProfile: (profile: { username: string; full_name: string | null } | null) => void
 }
 
 export const useUserStore = create<UserState>((set) => ({
