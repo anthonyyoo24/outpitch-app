@@ -119,17 +119,21 @@ export function PitchEditorToolbar({
             ? true
             : isPublished
 
-    const handleCopyLink = () => {
-        const username = profile?.username || user?.user_metadata?.username || user?.email?.split('@')[0]
+    const handleCopyLink = async () => {
+        const username = profile?.username || user?.user_metadata?.username
         if (!username || !slug) return
 
         const url = `${window.location.origin}/p/${username}/${slug}`
-        navigator.clipboard.writeText(url)
 
-        setIsCopied(true)
-        toast.success("Link copied to clipboard!")
-
-        setTimeout(() => setIsCopied(false), 2000)
+        try {
+            await navigator.clipboard.writeText(url)
+            setIsCopied(true)
+            toast.success("Link copied to clipboard!")
+            setTimeout(() => setIsCopied(false), 2000)
+        } catch (error) {
+            console.error("Failed to copy link:", error)
+            toast.error("Failed to copy link")
+        }
     }
 
     return (
