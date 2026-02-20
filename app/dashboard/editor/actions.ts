@@ -1,7 +1,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
-import { PitchFormValues, pitchSchema, publishSchema } from "@/lib/schemas/pitch"
+import { PitchFormValues, pitchSchema, publishSchema, pitchFormSchema } from "@/lib/schemas/pitch"
 import { sanitizeHtml } from "@/lib/sanitize"
 import { slugify } from "@/lib/slug"
 
@@ -69,7 +69,7 @@ export async function updatePitch(pitchId: string, values: PitchFormValues) {
     }
 
     // 2. Validate and Parse input values
-    const validation = pitchSchema.safeParse(values)
+    const validation = pitchFormSchema.safeParse(values)
 
     if (!validation.success) {
         // Log the error for debugging purposes (optional)

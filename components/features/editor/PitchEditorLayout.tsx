@@ -7,23 +7,21 @@ import { PitchEditorToolbar } from "./PitchEditorToolbar"
 import { PitchFormProvider } from "./PitchFormProvider"
 
 
-import { PitchFormValues, ActionStatus } from "@/lib/schemas/pitch"
+import { Pitch, ActionStatus } from "@/lib/schemas/pitch"
 
 interface PitchEditorLayoutProps {
     pitchId: string
-    initialData: PitchFormValues
+    initialData: Pitch
 }
 
 export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutProps) {
-    // Note: pitchId will be used later for fetching/saving data
-    // Fetch data server-side - Refactored to parent
-
-    // Data guaranteed by page component (Strict Fetching)
+    // Separate form data from system state
+    const { id: _id, user_id: _user_id, slug, status, ...formValues } = initialData
 
     // Initialize preview mode based on status
-    const [isPreviewMode, setIsPreviewMode] = useState(initialData.status === "published")
+    const [isPreviewMode, setIsPreviewMode] = useState(status === "published")
     const [actionStatus, setActionStatus] = useState<ActionStatus>("idle")
-    const [currentSlug, setCurrentSlug] = useState<string | null>((initialData as any).slug || null)
+    const [currentSlug, setCurrentSlug] = useState<string | null>(slug || null)
 
     // Reset success state after delay
     React.useEffect(() => {
@@ -34,7 +32,7 @@ export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutPro
     }, [actionStatus])
 
     return (
-        <PitchFormProvider key={initialData.status} defaultValues={initialData} pitchId={pitchId}>
+        <PitchFormProvider key={status} defaultValues={formValues} pitchId={pitchId}>
             <div className="flex-1 relative h-full overflow-hidden" data-pitch-id={pitchId}>
                 {/* Technical Grid Background handled in dashboard layout, but good to reinforce or keep empty if handled above */}
                 {/* Assuming GridBackground is in DashboardLayout as seen in previous view_file */}
@@ -47,6 +45,7 @@ export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutPro
                     onTogglePreview={setIsPreviewMode}
                     actionStatus={actionStatus}
                     onActionStatusChange={setActionStatus}
+                    initialStatus={status}
                 />
 
                 {/* Scrollable Container */}

@@ -17,6 +17,7 @@ interface PitchEditorToolbarProps {
     actionStatus: ActionStatus
     onActionStatusChange: (status: ActionStatus) => void
     onSlugUpdate: (slug: string) => void
+    initialStatus: "draft" | "published"
 }
 
 export function PitchEditorToolbar({
@@ -27,16 +28,15 @@ export function PitchEditorToolbar({
     actionStatus,
     onActionStatusChange,
     onSlugUpdate,
+    initialStatus,
 }: PitchEditorToolbarProps) {
-    const { getValues, setError, watch } = useFormContext<PitchFormValues>()
+    const { getValues, setError } = useFormContext<PitchFormValues>()
     const [isPublishing, setIsPublishing] = useState(false)
     const [isCopied, setIsCopied] = useState(false)
+    const [currentStatus, setCurrentStatus] = useState<"draft" | "published">(initialStatus)
     const router = useRouter()
     const user = useUserStore((state) => state.user)
     const profile = useUserStore((state) => state.profile)
-
-    // Watch status to react to changes
-    const status = watch("status")
 
     // Auto-switch to preview on publish if it was successful (detected via status change or prop)
     // However, the parent controls isPreviewMode. 
@@ -78,6 +78,7 @@ export function PitchEditorToolbar({
                 onSlugUpdate(result.slug)
             }
 
+            setCurrentStatus("published")
             onActionStatusChange("success-published")
             router.refresh()
             toast.success("Pitch published successfully!")
@@ -96,6 +97,7 @@ export function PitchEditorToolbar({
         setIsPublishing(true)
         try {
             await unpublishPitch(pitchId)
+            setCurrentStatus("draft")
             onActionStatusChange("success-unpublished")
             router.refresh()
             toast.success("Pitch unpublished successfully!")
@@ -107,7 +109,7 @@ export function PitchEditorToolbar({
         }
     }
 
-    const isPublished = status === "published"
+    const isPublished = currentStatus === "published"
 
     // Determine whether to show the unpublish button based on status and action feedback
     // If we just successfully published, we want to keep showing the publish button (in success state)
