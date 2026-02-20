@@ -16,7 +16,8 @@ interface PitchEditorLayoutProps {
 
 export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutProps) {
     // Separate form data from system state
-    const { id: _id, user_id: _user_id, slug, status, ...formValues } = initialData
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, user_id, slug, status, ...formValues } = initialData
 
     // Initialize preview mode based on status
     const [isPreviewMode, setIsPreviewMode] = useState(status === "published")
