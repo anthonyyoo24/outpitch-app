@@ -8,7 +8,7 @@ export const pitchSchema = z.object({
     header_content: z.string(), // HTML string for the rich text header
     video_url: z.string(),
     video_type: z.enum(["upload", "youtube", "loom"]).nullable().optional(),
-    slug: z.string().nullable().optional(), // [NEW]
+    slug: z.string().nullable().optional(),
     bio: z.string().optional(),
     portfolio: z.array(
         z.object({
@@ -60,5 +60,13 @@ export const publishSchema = pitchSchema.extend({
     })
 })
 
-export type PitchFormValues = z.infer<typeof pitchSchema>
+export const pitchFormSchema = pitchSchema.omit({
+    id: true,
+    user_id: true,
+    slug: true,
+    status: true,
+})
+
+export type Pitch = z.infer<typeof pitchSchema>
+export type PitchFormValues = z.infer<typeof pitchFormSchema>
 export type ActionStatus = "idle" | "success-published" | "success-unpublished"

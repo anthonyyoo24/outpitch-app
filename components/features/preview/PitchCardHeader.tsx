@@ -1,4 +1,5 @@
 import { PitchCardVideo } from "./PitchCardVideo"
+import { sanitizeHtml } from "@/lib/sanitize"
 
 interface PitchCardHeaderProps {
     headerContent: string
@@ -12,7 +13,7 @@ export function PitchCardHeader({ headerContent, bio, videoUrl }: PitchCardHeade
             <div className="w-full text-center z-10">
                 <h1
                     className="text-3xl leading-[1.2] font-semibold text-neutral-900 tracking-tighter sm:text-[40px]"
-                    dangerouslySetInnerHTML={{ __html: headerContent || "" }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(headerContent || "") }}
                 />
             </div>
 
