@@ -11,7 +11,7 @@ export function PitchCardHeader({ headerContent, bio, videoUrl }: PitchCardHeade
         <div className="flex flex-col items-center pt-2">
             <div className="w-full text-center z-10">
                 <h1
-                    className="text-3xl leading-[1.1] font-semibold text-neutral-900 tracking-tighter sm:text-[40px]"
+                    className="text-3xl leading-[1.2] font-semibold text-neutral-900 tracking-tighter sm:text-[40px]"
                     dangerouslySetInnerHTML={{ __html: headerContent || "" }}
                 />
             </div>

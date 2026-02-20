@@ -178,8 +178,8 @@ export async function publishPitch(pitchId: string) {
         .select("slug")
         .single()
 
-    if (error) {
-        throw new Error(error.message)
+    if (error || !updatedPitch) {
+        throw new Error(error?.message || "Failed to retrieve updated pitch")
     }
 
     return { success: true, slug: updatedPitch.slug }
