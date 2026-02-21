@@ -49,7 +49,6 @@ export function PitchEditorToolbar({
     const [currentStatus, setCurrentStatus] = useState<"draft" | "published">(initialStatus)
 
     const router = useRouter()
-    const user = useUserStore((state) => state.user)
     const profile = useUserStore((state) => state.profile)
 
     // 3. Render Phase Update: Intercept prop changes and update state safely WITHOUT useEffect
@@ -142,7 +141,7 @@ export function PitchEditorToolbar({
             : isPublished
 
     const handleCopyLink = async () => {
-        const username = profile?.username || user?.user_metadata?.username
+        const username = profile?.username
         if (!username || !slug) return
 
         const url = `${window.location.origin}/p/${username}/${slug}`
