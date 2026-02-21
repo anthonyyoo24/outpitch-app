@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { Eye, Rocket, Loader2, Check, EyeOff, Pencil, Link as LinkIcon } from "lucide-react"
 import { publishPitch, unpublishPitch } from "@/app/dashboard/editor/actions"
 import { useRouter } from "next/navigation"
@@ -33,6 +33,15 @@ export function PitchEditorToolbar({
     const { getValues, setError } = useFormContext<PitchFormValues>()
     const [isPublishing, setIsPublishing] = useState(false)
     const [isCopied, setIsCopied] = useState(false)
+    const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    useEffect(() => {
+        return () => {
+            if (copyTimeoutRef.current) {
+                clearTimeout(copyTimeoutRef.current)
+            }
+        }
+    }, [])
 
     // 1. Keep track of the previous prop to detect changes
     const [prevInitialStatus, setPrevInitialStatus] = useState(initialStatus)
@@ -140,9 +149,10 @@ export function PitchEditorToolbar({
 
         try {
             await navigator.clipboard.writeText(url)
+            if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current)
             setIsCopied(true)
             toast.success("Link copied to clipboard!")
-            setTimeout(() => setIsCopied(false), 2000)
+            copyTimeoutRef.current = setTimeout(() => setIsCopied(false), 2000)
         } catch (error) {
             console.error("Failed to copy link:", error)
             toast.error("Failed to copy link")
