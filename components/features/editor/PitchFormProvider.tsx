@@ -28,7 +28,7 @@ export function PitchFormProvider({ children, defaultValues, pitchId }: PitchFor
             <AutoSave pitchId={pitchId} defaultValues={defaultValues} />
             <form onSubmit={(e) => e.preventDefault()} className="h-full flex flex-col">
                 {children}
-                <DevTool control={methods.control as any} />
+                {process.env.NODE_ENV === "development" && <DevTool control={methods.control as any} />}
             </form>
         </FormProvider>
     )
