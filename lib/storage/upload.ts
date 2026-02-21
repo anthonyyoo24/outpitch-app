@@ -102,6 +102,7 @@ export async function deletePitchThumbnail(path: string) {
 
     if (error) {
         console.error("Failed to delete old thumbnail:", error)
+        throw new Error(`Failed to delete old thumbnail: ${error.message}`, { cause: error })
     }
 }
 

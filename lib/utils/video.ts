@@ -17,12 +17,17 @@ export async function generateGifThumbnail(
     targetWidth: number = 320
 ): Promise<Blob | null> {
     return new Promise((resolve) => {
+        const objectUrl = URL.createObjectURL(file)
         try {
             const video = document.createElement("video")
-            video.src = URL.createObjectURL(file)
+            video.src = objectUrl
             video.muted = true
             video.crossOrigin = "anonymous"
             video.playsInline = true
+
+            const cleanup = () => {
+                URL.revokeObjectURL(objectUrl)
+            }
 
             video.onloadeddata = () => {
                 const canvas = document.createElement("canvas")
@@ -64,6 +69,7 @@ export async function generateGifThumbnail(
                         // All frames captured, finalize GIF
                         gif.finish()
                         const buffer = gif.bytesView()
+                        cleanup()
                         resolve(new Blob([buffer], { type: "image/gif" }))
                     }
                 }
@@ -77,10 +83,12 @@ export async function generateGifThumbnail(
 
             video.onerror = () => {
                 console.error("Video loading error:", video.error)
+                cleanup()
                 resolve(null)
             }
         } catch (err) {
             console.error("Error setting up GIF generation:", err)
+            URL.revokeObjectURL(objectUrl)
             resolve(null)
         }
     })

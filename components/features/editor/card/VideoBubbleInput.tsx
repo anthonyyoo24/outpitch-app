@@ -26,6 +26,15 @@ export function VideoBubbleInput() {
     const videoType = watch("video_type")
     const [debouncedVideoUrl] = useDebounce(videoUrl, 500)
 
+    // Cleanup local blob URL to prevent memory leaks
+    useEffect(() => {
+        return () => {
+            if (previewUrl && previewUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(previewUrl)
+            }
+        }
+    }, [previewUrl])
+
     // Sync preview with form state
     useEffect(() => {
         if (isUploading) return
