@@ -77,8 +77,8 @@ export async function generateGifThumbnail(
                 // Listen for seeked events to guarantee the frame is ready to draw
                 video.onseeked = captureFrame
 
-                // Trigger the first frame capture
-                video.currentTime = 0
+                // Capture the first frame directly (video is already at time 0)
+                captureFrame()
             }
 
             video.onerror = () => {
