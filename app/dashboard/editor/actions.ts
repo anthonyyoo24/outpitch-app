@@ -35,6 +35,7 @@ export async function getPitch(pitchId: string) {
         role_title: data.role_title || "",
         bio: data.bio || "",
         video_url: data.video_url || "",
+        video_thumbnail_url: data.video_thumbnail_url || null,
         video_type: (data.video_type as "upload" | "youtube" | "loom" | null) || null,
 
         resume_url: data.resume_url || "",
@@ -94,6 +95,7 @@ export async function updatePitch(pitchId: string, values: PitchFormValues) {
             role_title: parsedValues.role_title,
             bio: parsedValues.bio,
             video_url: parsedValues.video_url,
+            video_thumbnail_url: parsedValues.video_thumbnail_url,
             video_type: parsedValues.video_type,
             resume_url: parsedValues.resume_url,
 

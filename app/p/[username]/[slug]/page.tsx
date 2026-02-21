@@ -58,8 +58,8 @@ export async function generateMetadata({ params }: PublicPitchPageProps): Promis
     const title = stripHtml(pitch.header_content || `${username}'s Pitch`)
     const description = stripHtml(pitch.bio || "Check out my pitch on Outpitch.")
 
-    // Fallback thumbnail image
-    const ogImage = "https://outpitch.com/og-image.jpg"
+    // Use the animated GIF thumbnail if available, otherwise fallback
+    const ogImage = pitch.video_thumbnail_url || "https://outpitch.com/og-image.jpg"
 
     return {
         title,
