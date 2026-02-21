@@ -38,3 +38,14 @@ export function stripHtml(html: string): string {
     .replace(/\s+/g, " ") // Collapse whitespace
     .trim()
 }
+/**
+ * Masks an identifier (like username or slug) for safe logging.
+ * Returns a redacted version (e.g., "jo***oe") to protect PII.
+ */
+export function maskIdentifier(value: string | undefined | null): string {
+  if (!value) return "unknown"
+  if (value.length <= 4) return "****"
+  const start = value.slice(0, 2)
+  const end = value.slice(-2)
+  return `${start}***${end}`
+}

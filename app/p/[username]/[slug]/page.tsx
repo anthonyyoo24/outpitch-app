@@ -4,7 +4,7 @@ import { cache } from "react"
 import { createClient } from "@/lib/supabase/server"
 import { PitchPreviewCard, type PitchPreviewCardProps } from "@/components/features/preview/PitchPreviewCard"
 import { GridBackground } from "@/components/ui/GridBackground"
-import { stripHtml } from "@/lib/utils"
+import { stripHtml, maskIdentifier } from "@/lib/utils"
 
 interface PublicPitchPageProps {
     params: Promise<{
@@ -28,7 +28,7 @@ const getStoredPitch = cache(async (username: string, slug: string) => {
         .maybeSingle()
 
     if (profileError) {
-        console.error(`[PublicPitchPage] Error fetching profile for username ${username}:`, profileError)
+        console.error(`[PublicPitchPage] Error fetching profile for username ${maskIdentifier(username)}:`, profileError)
     }
 
     if (!profile) return { profile: null, pitch: null }
@@ -43,7 +43,7 @@ const getStoredPitch = cache(async (username: string, slug: string) => {
         .maybeSingle()
 
     if (pitchError) {
-        console.error(`[PublicPitchPage] Error fetching pitch for slug ${slug}:`, pitchError)
+        console.error(`[PublicPitchPage] Error fetching pitch for slug ${maskIdentifier(slug)}:`, pitchError)
     }
 
     return { profile, pitch }
