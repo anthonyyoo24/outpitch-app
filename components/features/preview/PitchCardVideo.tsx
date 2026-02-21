@@ -101,7 +101,7 @@ export function PitchCardVideo({ videoUrl, videoThumbnailUrl }: PitchCardVideoPr
 
             {(showPlayIcon || showPauseIcon) && (
                 <div className="flex bg-white/5 absolute top-0 right-0 bottom-0 left-0 items-center justify-center pointer-events-none z-10">
-                    <div className="bg-white/30 backdrop-blur-sm border border-white/40 rounded-full w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                    <div className="bg-white/30 backdrop-blur-sm border border-white/40 rounded-full w-9 h-9 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-sm">
                         {showPauseIcon ? (
                             <Pause className="w-5 h-5 text-black fill-current" />
                         ) : (
