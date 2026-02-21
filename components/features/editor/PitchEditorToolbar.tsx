@@ -33,10 +33,21 @@ export function PitchEditorToolbar({
     const { getValues, setError } = useFormContext<PitchFormValues>()
     const [isPublishing, setIsPublishing] = useState(false)
     const [isCopied, setIsCopied] = useState(false)
+
+    // 1. Keep track of the previous prop to detect changes
+    const [prevInitialStatus, setPrevInitialStatus] = useState(initialStatus)
+    // 2. The optimistic current local state
     const [currentStatus, setCurrentStatus] = useState<"draft" | "published">(initialStatus)
+
     const router = useRouter()
     const user = useUserStore((state) => state.user)
     const profile = useUserStore((state) => state.profile)
+
+    // 3. Render Phase Update: Intercept prop changes and update state safely WITHOUT useEffect
+    if (initialStatus !== prevInitialStatus) {
+        setPrevInitialStatus(initialStatus)
+        setCurrentStatus(initialStatus)
+    }
 
     // Auto-switch to preview on publish if it was successful (detected via status change or prop)
     // However, the parent controls isPreviewMode. 

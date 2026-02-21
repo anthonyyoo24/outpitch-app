@@ -33,7 +33,7 @@ export function PitchEditorLayout({ pitchId, initialData }: PitchEditorLayoutPro
     }, [actionStatus])
 
     return (
-        <PitchFormProvider key={status} defaultValues={formValues} pitchId={pitchId}>
+        <PitchFormProvider defaultValues={formValues} pitchId={pitchId}>
             <div className="flex-1 relative h-full overflow-hidden" data-pitch-id={pitchId}>
                 {/* Technical Grid Background handled in dashboard layout, but good to reinforce or keep empty if handled above */}
                 {/* Assuming GridBackground is in DashboardLayout as seen in previous view_file */}
