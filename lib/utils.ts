@@ -35,6 +35,17 @@ export function stripHtml(html: string): string {
   if (!html) return ""
   return html
     .replace(/<[^>]*>/g, " ") // Replace tags with space
+    // Decode basic named entities
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    // Decode numeric entities (&#123;)
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+    // Decode hex entities (&#x1a2b;)
+    .replace(/&#x([a-f\d]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
     .replace(/\s+/g, " ") // Collapse whitespace
     .trim()
 }
