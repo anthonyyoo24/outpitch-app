@@ -33,6 +33,9 @@ export async function generateGifThumbnail(
             }
 
             let settled = false
+            // eslint-disable-next-line prefer-const
+            let seekTimeoutId: ReturnType<typeof setTimeout>
+
             const finish = (result: Blob | null) => {
                 if (settled) return
                 settled = true
@@ -42,7 +45,7 @@ export async function generateGifThumbnail(
             }
 
             // Failsafe: if onseeked never fires, resolve null instead of hanging
-            const seekTimeoutId = setTimeout(() => {
+            seekTimeoutId = setTimeout(() => {
                 console.warn("GIF generation timed out.")
                 finish(null)
             }, 15_000)
