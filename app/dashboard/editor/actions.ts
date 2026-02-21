@@ -1,8 +1,9 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
-import { PitchFormValues, pitchSchema, publishSchema } from "@/components/features/editor/schema"
+import { PitchFormValues, pitchSchema, publishSchema, pitchFormSchema } from "@/lib/schemas/pitch"
 import { sanitizeHtml } from "@/lib/sanitize"
+import { slugify } from "@/lib/slug"
 
 
 export async function getPitch(pitchId: string) {
@@ -34,10 +35,12 @@ export async function getPitch(pitchId: string) {
         role_title: data.role_title || "",
         bio: data.bio || "",
         video_url: data.video_url || "",
+        video_thumbnail_url: data.video_thumbnail_url || null,
         video_type: (data.video_type as "upload" | "youtube" | "loom" | null) || null,
 
         resume_url: data.resume_url || "",
         status: data.status || "draft",
+        slug: data.slug || null,
 
         // New structure: Contact object
         contact: {
@@ -67,7 +70,7 @@ export async function updatePitch(pitchId: string, values: PitchFormValues) {
     }
 
     // 2. Validate and Parse input values
-    const validation = pitchSchema.safeParse(values)
+    const validation = pitchFormSchema.safeParse(values)
 
     if (!validation.success) {
         // Log the error for debugging purposes (optional)
@@ -92,6 +95,7 @@ export async function updatePitch(pitchId: string, values: PitchFormValues) {
             role_title: parsedValues.role_title,
             bio: parsedValues.bio,
             video_url: parsedValues.video_url,
+            video_thumbnail_url: parsedValues.video_thumbnail_url,
             video_type: parsedValues.video_type,
             resume_url: parsedValues.resume_url,
 
@@ -158,20 +162,29 @@ export async function publishPitch(pitchId: string) {
         throw new Error(`Cannot publish: ${errorMessage}`)
     }
 
-    const { error } = await supabase
+    // 4. Generate Slug if first time publishing (or if missing)
+    let slug = currentPitch.slug
+    if (!slug) {
+        slug = slugify(`${currentPitch.company_name}-${currentPitch.role_title}`)
+    }
+
+    const { data: updatedPitch, error } = await supabase
         .from("pitches")
         .update({
             status: "published",
             published_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
+            slug: slug // Save the generated slug
         })
         .eq("id", pitchId)
+        .select("slug")
+        .single()
 
-    if (error) {
-        throw new Error(error.message)
+    if (error || !updatedPitch) {
+        throw new Error(error?.message || "Failed to retrieve updated pitch")
     }
 
-    return { success: true }
+    return { success: true, slug: updatedPitch.slug }
 }
 
 export async function unpublishPitch(pitchId: string) {

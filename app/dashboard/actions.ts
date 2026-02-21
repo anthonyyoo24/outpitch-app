@@ -29,6 +29,7 @@ export async function createPitchAction(formData: FormData) {
 
     const { companyName, roleTitle } = parseResult.data
 
+    // 2. Insert with robust error handling (Replaces previous UX check)
     const { data, error } = await supabase.from('pitches').insert({
         user_id: user.id,
         company_name: companyName,
@@ -39,6 +40,10 @@ export async function createPitchAction(formData: FormData) {
     }).select('id').single()
 
     if (error) {
+        // Postgres unique_violation error code
+        if (error.code === '23505') {
+            return { error: "A pitch for this role at this company already exists. If you'd like to create another, please edit the existing role (ie. add a suffix to the role title)." }
+        }
         return { error: error.message }
     }
 

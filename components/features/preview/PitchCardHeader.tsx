@@ -1,23 +1,25 @@
 import { PitchCardVideo } from "./PitchCardVideo"
+import { sanitizeHtml } from "@/lib/sanitize"
 
 interface PitchCardHeaderProps {
     headerContent: string
     bio?: string
     videoUrl?: string
+    videoThumbnailUrl?: string | null
 }
 
-export function PitchCardHeader({ headerContent, bio, videoUrl }: PitchCardHeaderProps) {
+export function PitchCardHeader({ headerContent, bio, videoUrl, videoThumbnailUrl }: PitchCardHeaderProps) {
     return (
         <div className="flex flex-col items-center pt-2">
             <div className="w-full text-center z-10">
                 <h1
-                    className="text-3xl leading-[1.1] font-semibold text-neutral-900 tracking-tighter sm:text-[40px]"
-                    dangerouslySetInnerHTML={{ __html: headerContent || "" }}
+                    className="text-3xl leading-[1.2] font-semibold text-neutral-900 tracking-tighter sm:text-[40px]"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(headerContent || "") }}
                 />
             </div>
 
             {/* Video Bubble */}
-            <PitchCardVideo key={videoUrl} videoUrl={videoUrl} />
+            <PitchCardVideo key={videoUrl} videoUrl={videoUrl} videoThumbnailUrl={videoThumbnailUrl} />
 
             {bio && (
                 <section className="mb-12">

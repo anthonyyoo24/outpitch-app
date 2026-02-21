@@ -1,4 +1,3 @@
-
 import { z } from "zod"
 
 export const pitchSchema = z.object({
@@ -8,7 +7,9 @@ export const pitchSchema = z.object({
     role_title: z.string().min(1, "Role title is required"),
     header_content: z.string(), // HTML string for the rich text header
     video_url: z.string(),
+    video_thumbnail_url: z.string().nullable().optional(),
     video_type: z.enum(["upload", "youtube", "loom"]).nullable().optional(),
+    slug: z.string().nullable().optional(),
     bio: z.string().optional(),
     portfolio: z.array(
         z.object({
@@ -44,8 +45,18 @@ export const pitchSchema = z.object({
 })
 
 
+export const pitchFormSchema = pitchSchema.omit({
+    id: true,
+    user_id: true,
+    slug: true,
+    status: true,
+})
+
+export type Pitch = z.infer<typeof pitchSchema>
+export type PitchFormValues = z.infer<typeof pitchFormSchema>
+
 // Strict schema for publishing
-export const publishSchema = pitchSchema.extend({
+export const publishSchema = pitchFormSchema.extend({
     company_name: z.string().min(1, "Company name is required"),
     role_title: z.string().min(1, "Role title is required"),
     header_content: z.string().min(1, "Pitch text is required").refine(val => {
@@ -60,6 +71,4 @@ export const publishSchema = pitchSchema.extend({
     })
 })
 
-export type PitchFormValues = z.infer<typeof pitchSchema>
 export type ActionStatus = "idle" | "success-published" | "success-unpublished"
-

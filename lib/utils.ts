@@ -26,3 +26,37 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+/**
+ * Strips HTML tags from a string and decodes basic entities.
+ * Useful for using rich-text content in plain-text fields like SEO metadata.
+ */
+export function stripHtml(html: string): string {
+  if (!html) return ""
+  return html
+    .replace(/<[^>]*>/g, " ") // Replace tags with space
+    // Decode basic named entities
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    // Decode numeric entities (&#123;)
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+    // Decode hex entities (&#x1a2b;)
+    .replace(/&#x([a-f\d]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/\s+/g, " ") // Collapse whitespace
+    .trim()
+}
+/**
+ * Masks an identifier (like username or slug) for safe logging.
+ * Returns a redacted version (e.g., "jo***oe") to protect PII.
+ */
+export function maskIdentifier(value: string | undefined | null): string {
+  if (!value) return "unknown"
+  if (value.length <= 4) return "****"
+  const start = value.slice(0, 2)
+  const end = value.slice(-2)
+  return `${start}***${end}`
+}

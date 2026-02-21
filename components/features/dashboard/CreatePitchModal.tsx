@@ -35,8 +35,9 @@ export function CreatePitchModal() {
         startTransition(async () => {
             try {
                 const result = await createPitchAction(formData)
-                if (result.error) {
-                    throw new Error(result.error)
+                if (result?.error) {
+                    toast.error(result.error)
+                    return
                 }
 
                 setCreatePitchModalOpen(false)

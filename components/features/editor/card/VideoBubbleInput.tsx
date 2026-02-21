@@ -5,14 +5,15 @@ import React, { useState, useEffect } from "react"
 import { useFormContext } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 import { toast } from "sonner"
-import { Upload, Link as LinkIcon, X, Loader2 } from "lucide-react"
-import { ValidationTooltip } from "./validation/ValidationTooltip"
+import { Upload, /* Link as LinkIcon, */ X, Loader2 } from "lucide-react"
+// import { ValidationTooltip } from "./validation/ValidationTooltip"
 
-import { uploadPitchVideo, deletePitchVideo } from "@/lib/storage/upload"
+import { uploadPitchVideo, deletePitchVideo, uploadPitchThumbnail, deletePitchThumbnail } from "@/lib/storage/upload"
 import { useUserStore } from "@/lib/store/user-store"
+import { generateGifThumbnail } from "@/lib/utils/video"
 
 export function VideoBubbleInput() {
-    const { register, setValue, watch, getValues, setError, clearErrors, formState: { errors } } = useFormContext()
+    const { register, setValue, watch, getValues, /* setError, */ clearErrors, formState: { errors } } = useFormContext()
     const [isUploading, setIsUploading] = useState(false)
     const [isDragging, setIsDragging] = useState(false)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -24,6 +25,15 @@ export function VideoBubbleInput() {
     const videoUrl = watch("video_url")
     const videoType = watch("video_type")
     const [debouncedVideoUrl] = useDebounce(videoUrl, 500)
+
+    // Cleanup local blob URL to prevent memory leaks
+    useEffect(() => {
+        return () => {
+            if (previewUrl && previewUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(previewUrl)
+            }
+        }
+    }, [previewUrl])
 
     // Sync preview with form state
     useEffect(() => {
@@ -60,6 +70,7 @@ export function VideoBubbleInput() {
             return
         }
 
+        /* Commenting out YouTube/Loom support temporarily 
         // 1. YouTube
         const youtubeMatch = debouncedVideoUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)
         if (youtubeMatch) {
@@ -92,7 +103,9 @@ export function VideoBubbleInput() {
             fetchLoom()
             return
         }
+        */
 
+        /* Fallback logic removed as URL input is disabled
         // 3. Fallback (Invalid or Unknown)
         // If it looks like they tried to paste a link (length > 5) and clearly failed match
         if (debouncedVideoUrl.length > 5 && videoType !== 'upload') {
@@ -107,7 +120,8 @@ export function VideoBubbleInput() {
             // If it's just short typing, clear error to avoid noise
             clearErrors("video_url")
         }
-    }, [debouncedVideoUrl, videoType, isUploading, setValue, setError, clearErrors, videoUrl])
+        */
+    }, [debouncedVideoUrl, videoType, isUploading, setValue, clearErrors, videoUrl])
 
     // --- File Upload Handling ---
     // --- File Upload Handling ---
@@ -132,8 +146,8 @@ export function VideoBubbleInput() {
             // [ADDED CLEANUP BLOCK]
             // We read the current value (before upload finishes) to see if we have an old file to kill.
             const currentVideoUrl = getValues("video_url")
+            const currentThumbnailUrl = getValues("video_thumbnail_url")
 
-            // Check if it's a Supabase Storage URL
             // Check if it's a Supabase Storage URL
             if (currentVideoUrl && currentVideoUrl.includes("/storage/v1/object/public/pitch-videos/")) {
                 const oldPath = currentVideoUrl.split("pitch-videos/")[1]
@@ -141,11 +155,26 @@ export function VideoBubbleInput() {
                     await deletePitchVideo(oldPath) // Delete old file
                 }
             }
+            if (currentThumbnailUrl && currentThumbnailUrl.includes("/storage/v1/object/public/pitch-assets/")) {
+                const oldThumbPath = currentThumbnailUrl.split("pitch-assets/")[1]
+                if (oldThumbPath) {
+                    await deletePitchThumbnail(oldThumbPath) // Delete old thumbnail
+                }
+            }
             // [END CLEANUP BLOCK]
 
-            const { publicUrl } = await uploadPitchVideo(file, userId)
+            // Start generation and upload concurrently
+            const [videoUploadResult, thumbnailBlob] = await Promise.all([
+                uploadPitchVideo(file, userId),
+                generateGifThumbnail(file)
+            ])
 
-            setValue("video_url", publicUrl, { shouldDirty: true })
+            if (thumbnailBlob) {
+                const thumbUploadResult = await uploadPitchThumbnail(thumbnailBlob, userId, "gif")
+                setValue("video_thumbnail_url", thumbUploadResult.publicUrl, { shouldDirty: true })
+            }
+
+            setValue("video_url", videoUploadResult.publicUrl, { shouldDirty: true })
             setValue("video_type", "upload", { shouldDirty: true })
             toast.success("Video uploaded successfully!")
         } catch (error) {
@@ -230,13 +259,21 @@ export function VideoBubbleInput() {
                                 e.stopPropagation()
                                 try {
                                     const currentVideoUrl = getValues("video_url")
+                                    const currentThumbnailUrl = getValues("video_thumbnail_url")
+
                                     if (currentVideoUrl && currentVideoUrl.includes("/storage/v1/object/public/pitch-videos/")) {
                                         const oldPath = currentVideoUrl.split("pitch-videos/")[1]
                                         if (oldPath) {
                                             await deletePitchVideo(oldPath)
-                                            toast.success("Video removed")
                                         }
                                     }
+                                    if (currentThumbnailUrl && currentThumbnailUrl.includes("/storage/v1/object/public/pitch-assets/")) {
+                                        const oldThumbPath = currentThumbnailUrl.split("pitch-assets/")[1]
+                                        if (oldThumbPath) {
+                                            await deletePitchThumbnail(oldThumbPath)
+                                        }
+                                    }
+                                    toast.success("Video removed")
                                 } catch (error) {
                                     console.error("Cleanup error:", error)
                                 }
@@ -244,6 +281,7 @@ export function VideoBubbleInput() {
                                 setPreviewUrl(null)
                                 setPreviewType(null)
                                 setValue("video_url", "", { shouldDirty: true })
+                                setValue("video_thumbnail_url", null, { shouldDirty: true })
                                 setValue("video_type", null)
                             }}
                         >
@@ -279,7 +317,7 @@ export function VideoBubbleInput() {
                 )}
             </div>
 
-            {/* 2. Link Input (Below Bubble) */}
+            {/* 2. Link Input (Commenting out as only uploads are supported for now)
             <div className={`mt-4 w-full max-w-60 relative ${videoType === 'upload' ? 'hidden' : ''}`}>
                 <div className={`group relative flex items-center gap-3 p-1.5 pl-3 rounded-2xl border bg-neutral-50/50 transition-colors focus-within:bg-white focus-within:shadow-sm ${error
                     ? "border-red-500 focus-within:border-red-500"
@@ -296,6 +334,7 @@ export function VideoBubbleInput() {
                     />
                 </div>
             </div>
+            */}
 
         </div>
     )

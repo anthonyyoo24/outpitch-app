@@ -1,34 +1,61 @@
 "use client"
 
-import React, { useState } from "react"
-import { Eye, Rocket, Loader2, Check, EyeOff, Pencil } from "lucide-react"
+import React, { useState, useRef, useEffect } from "react"
+import { Eye, Rocket, Loader2, Check, EyeOff, Pencil, Link as LinkIcon } from "lucide-react"
 import { publishPitch, unpublishPitch } from "@/app/dashboard/editor/actions"
 import { useRouter } from "next/navigation"
 import { useFormContext } from "react-hook-form"
 import { toast } from "sonner"
-import { PitchFormValues, publishSchema, ActionStatus } from "./schema"
+import { PitchFormValues, publishSchema, ActionStatus } from "@/lib/schemas/pitch"
+import { useUserStore } from "@/lib/store/user-store"
 
 interface PitchEditorToolbarProps {
     pitchId: string
+    slug: string | null
     isPreviewMode: boolean
     onTogglePreview: (isPreview: boolean) => void
     actionStatus: ActionStatus
     onActionStatusChange: (status: ActionStatus) => void
+    onSlugUpdate: (slug: string) => void
+    initialStatus: "draft" | "published"
 }
 
 export function PitchEditorToolbar({
     pitchId,
+    slug,
     isPreviewMode,
     onTogglePreview,
     actionStatus,
     onActionStatusChange,
+    onSlugUpdate,
+    initialStatus,
 }: PitchEditorToolbarProps) {
-    const { getValues, setError, watch } = useFormContext<PitchFormValues>()
+    const { getValues, setError } = useFormContext<PitchFormValues>()
     const [isPublishing, setIsPublishing] = useState(false)
-    const router = useRouter()
+    const [isCopied, setIsCopied] = useState(false)
+    const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-    // Watch status to react to changes
-    const status = watch("status")
+    useEffect(() => {
+        return () => {
+            if (copyTimeoutRef.current) {
+                clearTimeout(copyTimeoutRef.current)
+            }
+        }
+    }, [])
+
+    // 1. Keep track of the previous prop to detect changes
+    const [prevInitialStatus, setPrevInitialStatus] = useState(initialStatus)
+    // 2. The optimistic current local state
+    const [currentStatus, setCurrentStatus] = useState<"draft" | "published">(initialStatus)
+
+    const router = useRouter()
+    const profile = useUserStore((state) => state.profile)
+
+    // 3. Render Phase Update: Intercept prop changes and update state safely WITHOUT useEffect
+    if (initialStatus !== prevInitialStatus) {
+        setPrevInitialStatus(initialStatus)
+        setCurrentStatus(initialStatus)
+    }
 
     // Auto-switch to preview on publish if it was successful (detected via status change or prop)
     // However, the parent controls isPreviewMode. 
@@ -62,8 +89,15 @@ export function PitchEditorToolbar({
         }
 
         setIsPublishing(true)
+
         try {
-            await publishPitch(pitchId)
+            const result = await publishPitch(pitchId)
+
+            if (result.slug) {
+                onSlugUpdate(result.slug)
+            }
+
+            setCurrentStatus("published")
             onActionStatusChange("success-published")
             router.refresh()
             toast.success("Pitch published successfully!")
@@ -82,6 +116,7 @@ export function PitchEditorToolbar({
         setIsPublishing(true)
         try {
             await unpublishPitch(pitchId)
+            setCurrentStatus("draft")
             onActionStatusChange("success-unpublished")
             router.refresh()
             toast.success("Pitch unpublished successfully!")
@@ -93,7 +128,7 @@ export function PitchEditorToolbar({
         }
     }
 
-    const isPublished = status === "published"
+    const isPublished = currentStatus === "published"
 
     // Determine whether to show the unpublish button based on status and action feedback
     // If we just successfully published, we want to keep showing the publish button (in success state)
@@ -105,9 +140,47 @@ export function PitchEditorToolbar({
             ? true
             : isPublished
 
+    const handleCopyLink = async () => {
+        const username = profile?.username
+        if (!username || !slug) return
+
+        const url = `${window.location.origin}/p/${username}/${slug}`
+
+        try {
+            await navigator.clipboard.writeText(url)
+            if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current)
+            setIsCopied(true)
+            toast.success("Link copied to clipboard!")
+            copyTimeoutRef.current = setTimeout(() => setIsCopied(false), 2000)
+        } catch (error) {
+            console.error("Failed to copy link:", error)
+            toast.error("Failed to copy link")
+        }
+    }
+
     return (
         <div className="absolute top-0 left-0 right-0 h-14 flex items-center justify-end px-6 z-10 pointer-events-none sm:pointer-events-auto">
             <div className="hidden sm:flex items-center gap-2">
+                {isPublished && slug && (
+                    <button
+                        type="button"
+                        onClick={handleCopyLink}
+                        className="group flex items-center gap-2 cursor-pointer border px-4 py-1.5 rounded-full text-xs font-medium shadow-[0_1px_2px_rgba(0,0,0,0.06)] transition-all active:scale-95 bg-white border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-300"
+                    >
+                        {isCopied ? (
+                            <>
+                                <Check className="w-3.5 h-3.5 text-green-500" />
+                                <span className="text-green-600">Copied!</span>
+                            </>
+                        ) : (
+                            <>
+                                <LinkIcon className="w-3.5 h-3.5" />
+                                <span>Share Link</span>
+                            </>
+                        )}
+                    </button>
+                )}
+
                 <button
                     type="button"
                     onClick={() => onTogglePreview(!isPreviewMode)}

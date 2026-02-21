@@ -1,7 +1,7 @@
 import React from "react"
 import { UseFormRegister, UseFormGetValues } from "react-hook-form"
 import { Trash2, ChevronUp } from "lucide-react"
-import { PitchFormValues } from "@/components/features/editor/schema"
+import { PitchFormValues } from "@/lib/schemas/pitch"
 import { PLATFORMS, SELECT_PLATFORM, PlatformId } from "./constants"
 import { ValidationTooltip } from "../validation/ValidationTooltip"
 
@@ -91,10 +91,10 @@ export function SocialLinkItem({
                                 disabled={isUsed}
                                 onClick={isUsed ? undefined : () => handlePlatformSelect(p.id)}
                                 className={`w-full px-3 py-2 text-left text-xs font-mono flex items-center gap-2 transition-colors rounded-lg ${p.id === platformValue
-                                        ? "bg-neutral-50 text-neutral-900 font-medium"
-                                        : isUsed
-                                            ? "text-neutral-300 cursor-not-allowed opacity-50"
-                                            : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 cursor-pointer"
+                                    ? "bg-neutral-50 text-neutral-900 font-medium"
+                                    : isUsed
+                                        ? "text-neutral-300 cursor-not-allowed opacity-50"
+                                        : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 cursor-pointer"
                                     }`}
                             >
                                 <PIcon className="w-3.5 h-3.5" />

@@ -4,7 +4,7 @@ import React from "react"
 import { useForm, FormProvider, DefaultValues, Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import dynamic from "next/dynamic"
-import { pitchSchema, PitchFormValues } from "./schema"
+import { pitchFormSchema, PitchFormValues } from "@/lib/schemas/pitch"
 
 const AutoSave = dynamic(() => import("./AutoSave").then((mod) => mod.AutoSave), { ssr: false })
 const DevTool = dynamic(() => import("@hookform/devtools").then((mod) => mod.DevTool), { ssr: false })
@@ -17,7 +17,7 @@ interface PitchFormProviderProps {
 
 export function PitchFormProvider({ children, defaultValues, pitchId }: PitchFormProviderProps) {
     const methods = useForm<PitchFormValues>({
-        resolver: zodResolver(pitchSchema) as Resolver<PitchFormValues>,
+        resolver: zodResolver(pitchFormSchema) as Resolver<PitchFormValues>,
         defaultValues,
         mode: "onChange",
         delayError: 1000,
