@@ -70,7 +70,7 @@ export async function generateGifThumbnail(
                         gif.finish()
                         const buffer = gif.bytesView()
                         cleanup()
-                        resolve(new Blob([buffer], { type: "image/gif" }))
+                        resolve(new Blob([buffer as unknown as BlobPart], { type: "image/gif" }))
                     }
                 }
 
