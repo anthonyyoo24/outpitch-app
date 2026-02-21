@@ -5,9 +5,10 @@ interface PitchCardHeaderProps {
     headerContent: string
     bio?: string
     videoUrl?: string
+    videoThumbnailUrl?: string | null
 }
 
-export function PitchCardHeader({ headerContent, bio, videoUrl }: PitchCardHeaderProps) {
+export function PitchCardHeader({ headerContent, bio, videoUrl, videoThumbnailUrl }: PitchCardHeaderProps) {
     return (
         <div className="flex flex-col items-center pt-2">
             <div className="w-full text-center z-10">
@@ -18,7 +19,7 @@ export function PitchCardHeader({ headerContent, bio, videoUrl }: PitchCardHeade
             </div>
 
             {/* Video Bubble */}
-            <PitchCardVideo key={videoUrl} videoUrl={videoUrl} />
+            <PitchCardVideo key={videoUrl} videoUrl={videoUrl} videoThumbnailUrl={videoThumbnailUrl} />
 
             {bio && (
                 <section className="mb-12">

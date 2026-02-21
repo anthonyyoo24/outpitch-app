@@ -5,9 +5,10 @@ import { Play, Pause } from "lucide-react"
 
 interface PitchCardVideoProps {
     videoUrl?: string
+    videoThumbnailUrl?: string | null
 }
 
-export function PitchCardVideo({ videoUrl }: PitchCardVideoProps) {
+export function PitchCardVideo({ videoUrl, videoThumbnailUrl }: PitchCardVideoProps) {
     const [isInPlaybackMode, setIsInPlaybackMode] = useState(false)
     const [isPlaying, setIsPlaying] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
@@ -52,6 +53,10 @@ export function PitchCardVideo({ videoUrl }: PitchCardVideoProps) {
     const showPlayIcon = !isInPlaybackMode || !isPlaying
     const showPauseIcon = isInPlaybackMode && isPlaying && isHovering
 
+    // Always render the video tag so it can be played instantly, 
+    // but hide it if we are showing the thumbnail
+    const showThumbnail = !!videoThumbnailUrl && !isInPlaybackMode
+
     return (
         <div
             className="relative shrink-0 w-28 h-28 rounded-full border border-neutral-100 overflow-hidden mt-8 mb-8 bg-neutral-50 sm:w-36 sm:h-36 shadow-xl shadow-neutral-200/50 group cursor-pointer"
@@ -60,23 +65,40 @@ export function PitchCardVideo({ videoUrl }: PitchCardVideoProps) {
             onMouseLeave={handleMouseLeave}
         >
             {videoUrl ? (
-                <video
-                    ref={videoRef}
-                    src={videoUrl}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                    style={{
-                        filter: 'saturate(0.85) contrast(1.15) brightness(1.05)',
-                    }}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                />
+                <>
+                    {/* The Animated GIF Thumbnail */}
+                    {showThumbnail && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                            src={videoThumbnailUrl}
+                            alt="Video Thumbnail"
+                            className="absolute inset-0 w-full h-full object-cover z-0"
+                            style={{ filter: 'saturate(0.85) contrast(1.15) brightness(1.05)' }}
+                        />
+                    )}
+
+                    <video
+                        ref={videoRef}
+                        src={videoUrl}
+                        // If no thumbnail, fallback to autoPlay loop muted behavior
+                        autoPlay={!showThumbnail && !isInPlaybackMode}
+                        loop={!showThumbnail && !isInPlaybackMode}
+                        muted={!isInPlaybackMode}
+                        playsInline
+                        className={`w-full h-full object-cover z-0 relative ${showThumbnail ? 'opacity-0' : 'opacity-100'}`}
+                        style={{ filter: 'saturate(0.85) contrast(1.15) brightness(1.05)' }}
+                        onPlay={() => setIsPlaying(true)}
+                        onPause={() => setIsPlaying(false)}
+                        onEnded={() => {
+                            setIsPlaying(false)
+                            setIsInPlaybackMode(false)
+                        }}
+                    />
+                </>
             ) : (
                 <div className="w-full h-full bg-neutral-100" />
             )}
+
             {(showPlayIcon || showPauseIcon) && (
                 <div className="flex bg-white/5 absolute top-0 right-0 bottom-0 left-0 items-center justify-center pointer-events-none z-10">
                     <div className="bg-white/30 backdrop-blur-sm border border-white/40 rounded-full w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-sm">

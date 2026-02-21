@@ -55,6 +55,57 @@ export async function deletePitchVideo(path: string) {
 }
 
 /**
+ * Uploads a thumbnail file (GIF/WebP) to the 'pitch-thumbnails' bucket (or 'pitch-assets').
+ * Note: we will use 'pitch-assets' for now since it's already configured as public.
+ * 
+ * @param file The file object to upload
+ * @param userId The ID of the user uploading the file
+ * @returns Object containing the public URL and storage path
+ */
+export async function uploadPitchThumbnail(file: File | Blob, userId: string, fileExtension: string = "gif") {
+    const supabase = createClient()
+    const fileName = `${nanoid()}.${fileExtension}`
+    const filePath = `${userId}/thumbnails/${fileName}`
+
+    const { error } = await supabase.storage
+        .from("pitch-assets") // Using pitch-assets bucket
+        .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: file.type || "image/gif"
+        })
+
+    if (error) {
+        throw error
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+        .from("pitch-assets")
+        .getPublicUrl(filePath)
+
+    return {
+        path: filePath,
+        publicUrl,
+    }
+}
+
+/**
+ * Deletes a thumbnail from the 'pitch-assets' bucket.
+ * 
+ * @param path The full storage path of the file to delete
+ */
+export async function deletePitchThumbnail(path: string) {
+    const supabase = createClient()
+    const { error } = await supabase.storage
+        .from("pitch-assets")
+        .remove([path])
+
+    if (error) {
+        console.error("Failed to delete old thumbnail:", error)
+    }
+}
+
+/**
  * Uploads an image file to the 'pitch-assets' bucket.
  * 
  * @param file The file object to upload

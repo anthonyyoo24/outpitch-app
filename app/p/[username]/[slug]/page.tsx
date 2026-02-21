@@ -124,6 +124,7 @@ export default async function PublicPitchPage({ params }: PublicPitchPageProps) 
                         headerContent={pitch.header_content || ""}
                         bio={pitch.bio || ""}
                         videoUrl={pitch.video_url || ""}
+                        videoThumbnailUrl={pitch.video_thumbnail_url || null}
 
                         // Specific type casts from PitchPreviewCardProps to avoid 'any'
                         portfolio={(pitch.portfolio as PitchPreviewCardProps["portfolio"]) || []}

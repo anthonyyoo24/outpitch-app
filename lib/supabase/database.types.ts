@@ -33,6 +33,7 @@ export type Database = {
           tech_stack: string[] | null
           updated_at: string
           user_id: string
+          video_thumbnail_url: string | null
           video_type: string | null
           video_url: string | null
           work_experience: Json | null
@@ -55,6 +56,7 @@ export type Database = {
           tech_stack?: string[] | null
           updated_at?: string
           user_id: string
+          video_thumbnail_url?: string | null
           video_type?: string | null
           video_url?: string | null
           work_experience?: Json | null
@@ -77,6 +79,7 @@ export type Database = {
           tech_stack?: string[] | null
           updated_at?: string
           user_id?: string
+          video_thumbnail_url?: string | null
           video_type?: string | null
           video_url?: string | null
           work_experience?: Json | null
