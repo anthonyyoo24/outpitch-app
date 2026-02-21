@@ -27,7 +27,25 @@ export async function generateGifThumbnail(
 
             const cleanup = () => {
                 URL.revokeObjectURL(objectUrl)
+                video.onseeked = null
+                video.onerror = null
+                video.onloadeddata = null
             }
+
+            let settled = false
+            const finish = (result: Blob | null) => {
+                if (settled) return
+                settled = true
+                clearTimeout(seekTimeoutId)
+                cleanup()
+                resolve(result)
+            }
+
+            // Failsafe: if onseeked never fires, resolve null instead of hanging
+            const seekTimeoutId = setTimeout(() => {
+                console.warn("GIF generation timed out.")
+                finish(null)
+            }, 15_000)
 
             video.onloadeddata = () => {
                 const canvas = document.createElement("canvas")
@@ -39,7 +57,7 @@ export async function generateGifThumbnail(
                 const ctx = canvas.getContext("2d", { willReadFrequently: true })
 
                 if (!ctx) {
-                    resolve(null)
+                    finish(null)
                     return
                 }
 
@@ -49,28 +67,32 @@ export async function generateGifThumbnail(
                 let currentFrame = 0
 
                 const captureFrame = () => {
-                    // Draw current video frame to canvas
-                    ctx.drawImage(video, 0, 0, targetWidth, targetHeight)
-                    const imageData = ctx.getImageData(0, 0, targetWidth, targetHeight)
+                    try {
+                        // Draw current video frame to canvas
+                        ctx.drawImage(video, 0, 0, targetWidth, targetHeight)
+                        const imageData = ctx.getImageData(0, 0, targetWidth, targetHeight)
 
-                    // Quantize colors (128 colors for balance of quality and speed)
-                    // format: 'rgb444' helps with performance and file size
-                    const palette = quantize(imageData.data, 128, { format: 'rgb444' })
-                    const index = applyPalette(imageData.data, palette)
+                        // Quantize colors (128 colors for balance of quality and speed)
+                        // format: 'rgb444' helps with performance and file size
+                        const palette = quantize(imageData.data, 128, { format: 'rgb444' })
+                        const index = applyPalette(imageData.data, palette)
 
-                    // Write frame to GIF
-                    gif.writeFrame(index, targetWidth, targetHeight, { palette, delay: delayMs })
+                        // Write frame to GIF
+                        gif.writeFrame(index, targetWidth, targetHeight, { palette, delay: delayMs })
 
-                    currentFrame++
-                    if (currentFrame < totalFrames && video.currentTime < video.duration) {
-                        // Move to next frame
-                        video.currentTime += (1 / fps)
-                    } else {
-                        // All frames captured, finalize GIF
-                        gif.finish()
-                        const buffer = gif.bytesView()
-                        cleanup()
-                        resolve(new Blob([buffer as unknown as BlobPart], { type: "image/gif" }))
+                        currentFrame++
+                        if (currentFrame < totalFrames && video.currentTime < video.duration) {
+                            // Move to next frame
+                            video.currentTime += (1 / fps)
+                        } else {
+                            // All frames captured, finalize GIF
+                            gif.finish()
+                            const buffer = gif.bytesView()
+                            finish(new Blob([buffer as unknown as BlobPart], { type: "image/gif" }))
+                        }
+                    } catch (err) {
+                        console.error("Frame capture error:", err)
+                        finish(null)
                     }
                 }
 
@@ -85,8 +107,7 @@ export async function generateGifThumbnail(
 
             video.onerror = () => {
                 console.error("Video loading error:", video.error)
-                cleanup()
-                resolve(null)
+                finish(null)
             }
         } catch (err) {
             console.error("Error setting up GIF generation:", err)
