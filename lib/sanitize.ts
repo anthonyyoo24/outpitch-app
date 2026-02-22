@@ -1,4 +1,4 @@
-import DOMPurify from "isomorphic-dompurify"
+import sanitizeHtmlLib from "sanitize-html"
 
 /**
  * Sanitizes HTML content from TipTap editor to prevent XSS attacks.
@@ -14,13 +14,21 @@ import DOMPurify from "isomorphic-dompurify"
  * @returns Sanitized HTML string safe for rendering
  */
 export function sanitizeHtml(html: string): string {
-    return DOMPurify.sanitize(html, {
-        ALLOWED_TAGS: ['p', 'strong', 'em', 'u', 'span', 'br'],
-        ALLOWED_ATTR: ['style'],
-        // Note: ALLOWED_STYLES is not available in current @types/dompurify
-        // We rely on ALLOWED_ATTR: ['style'] to permit inline styles
-        // and DOMPurify's default sanitization to strip dangerous values
-        KEEP_CONTENT: true,
+    return sanitizeHtmlLib(html, {
+        allowedTags: ['p', 'strong', 'em', 'u', 'span', 'br'],
+        allowedAttributes: {
+            'span': ['style']
+        },
+        allowedStyles: {
+            '*': {
+                // allow basic inline styles like color and font-size safely if needed
+                'color': [/^#(0x)?[0-9a-f]+$/i, /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/],
+                'font-size': [/^\d+(?:px|em|rem|%)$/]
+            }
+        },
+        textFilter: function (text) {
+            return text;
+        }
     })
 }
 
